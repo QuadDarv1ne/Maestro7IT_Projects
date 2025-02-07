@@ -117,12 +117,22 @@ figures = {'S': [['ooooo',
                   'ooxoo',
                   'ooooo']]}
 
+music_paused = False
 
 def pauseScreen():
+    global music_paused
     pause = pg.Surface((600, 500), pg.SRCALPHA)
     pause.fill((0, 0, 255, 127))
     display_surf.blit(pause, (0, 0))
 
+    if not music_paused:
+        print("Pausing music...")
+        pg.mixer.music.pause()
+        music_paused = True
+    else:
+        print("Unpausing music...")
+        pg.mixer.music.unpause()
+        music_paused = False
 
 def main():
     global fps_clock, display_surf, basic_font, big_font
@@ -143,8 +153,8 @@ def main():
         pauseScreen()
         showText('Игра закончена')
 
-
 def runTetris():
+    global music_paused
     cup = emptycup()
     last_move_down = time.time()
     last_side_move = time.time()
@@ -170,6 +180,7 @@ def runTetris():
         for event in pg.event.get():
             if event.type == KEYUP:
                 if event.key == K_SPACE:
+                    print("Space key released")
                     pauseScreen()
                     showText('Пауза')
                     last_fall = time.time()
@@ -252,16 +263,13 @@ def runTetris():
         pg.display.update()
         fps_clock.tick(fps)
 
-
 def txtObjects(text, font, color):
     surf = font.render(text, True, color)
     return surf, surf.get_rect()
 
-
 def stopGame():
     pg.quit()
     sys.exit()
-
 
 def checkKeys():
     quitGame()
@@ -271,7 +279,6 @@ def checkKeys():
             continue
         return event.key
     return None
-
 
 def showText(text):
     titleSurf, titleRect = txtObjects(text, big_font, title_color)
@@ -286,7 +293,6 @@ def showText(text):
         pg.display.update()
         fps_clock.tick()
 
-
 def quitGame():
     for event in pg.event.get(QUIT):  # проверка всех событий, приводящих к выходу из игры
         stopGame()
@@ -295,13 +301,11 @@ def quitGame():
             stopGame()
         pg.event.post(event)
 
-
 def calcSpeed(points):
     # вычисляет уровень
     level = int(points / 10) + 1
     fall_speed = 0.27 - (level * 0.02)
     return level, fall_speed
-
 
 def getNewFig():
     # возвращает новую фигуру со случайным цветом и углом поворота
@@ -313,13 +317,11 @@ def getNewFig():
                  'color': random.randint(0, len(colors) - 1)}
     return newFigure
 
-
 def addToCup(cup, fig):
     for x in range(fig_w):
         for y in range(fig_h):
             if figures[fig['shape']][fig['rotation']][y][x] != empty:
                 cup[x + fig['x']][y + fig['y']] = fig['color']
-
 
 def emptycup():
     # создает пустой стакан
@@ -328,10 +330,8 @@ def emptycup():
         cup.append([empty] * cup_h)
     return cup
 
-
 def incup(x, y):
     return x >= 0 and x < cup_w and y < cup_h
-
 
 def checkPos(cup, fig, adjX=0, adjY=0):
     # проверяет, находится ли фигура в границах стакана, не сталкиваясь с другими фигурами
@@ -346,7 +346,6 @@ def checkPos(cup, fig, adjX=0, adjY=0):
                 return False
     return True
 
-
 def isCompleted(cup, y):
     # проверяем наличие полностью заполненных рядов
     for x in range(cup_w):
@@ -354,9 +353,8 @@ def isCompleted(cup, y):
             return False
     return True
 
-
 def clearCompleted(cup):
-    # Удаление заполенных рядов и сдвиг верхних рядов вниз
+    # Удаление заполненных рядов и сдвиг верхних рядов вниз
     removed_lines = 0
     y = cup_h - 1
     while y >= 0:
@@ -371,10 +369,8 @@ def clearCompleted(cup):
             y -= 1
     return removed_lines
 
-
 def convertCoords(block_x, block_y):
     return (side_margin + (block_x * block)), (top_margin + (block_y * block))
-
 
 def drawBlock(block_x, block_y, color, pixelx=None, pixely=None):
     # отрисовка квадратных блоков, из которых состоят фигуры
@@ -385,7 +381,6 @@ def drawBlock(block_x, block_y, color, pixelx=None, pixely=None):
     pg.draw.rect(display_surf, colors[color], (pixelx + 1, pixely + 1, block - 1, block - 1), 0, 3)
     pg.draw.rect(display_surf, lightcolors[color], (pixelx + 1, pixely + 1, block - 4, block - 4), 0, 3)
     pg.draw.circle(display_surf, colors[color], (pixelx + block / 2, pixely + block / 2), 5)
-
 
 def gamecup(cup):
     # граница игрового поля-стакана
@@ -398,13 +393,11 @@ def gamecup(cup):
         for y in range(cup_h):
             drawBlock(x, y, cup[x][y])
 
-
 def drawTitle():
     titleSurf = big_font.render('Тетрис Lite', True, title_color)
     titleRect = titleSurf.get_rect()
     titleRect.topleft = (window_w - 425, 30)
     display_surf.blit(titleSurf, titleRect)
-
 
 def drawInfo(points, level):
     pointsSurf = basic_font.render(f'Баллы: {points}', True, txt_color)
@@ -427,7 +420,6 @@ def drawInfo(points, level):
     escbRect.topleft = (window_w - 550, 450)
     display_surf.blit(escbSurf, escbRect)
 
-
 def drawFig(fig, pixelx=None, pixely=None):
     figToDraw = figures[fig['shape']][fig['rotation']]
     if pixelx == None and pixely == None:
@@ -439,14 +431,12 @@ def drawFig(fig, pixelx=None, pixely=None):
             if figToDraw[y][x] != empty:
                 drawBlock(None, None, fig['color'], pixelx + (x * block), pixely + (y * block))
 
-
 def drawnextFig(fig):  # превью следующей фигуры
     nextSurf = basic_font.render('Следующая:', True, txt_color)
     nextRect = nextSurf.get_rect()
     nextRect.topleft = (window_w - 150, 180)
     display_surf.blit(nextSurf, nextRect)
     drawFig(fig, pixelx=window_w - 150, pixely=230)
-
 
 if __name__ == '__main__':
     main()
