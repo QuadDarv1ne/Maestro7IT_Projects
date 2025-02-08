@@ -1,0 +1,5 @@
+psutil
+gputil
+tabulate
+setuptools
+flet
