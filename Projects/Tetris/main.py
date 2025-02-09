@@ -1,442 +1,368 @@
 import pygame as pg
-import random, time, sys
-from pygame.locals import *
+import random
+import sys
 
-fps = 120
-window_w, window_h = 600, 500
-block, cup_h, cup_w = 20, 20, 10
+# Константы
+FPS = 120
+WINDOW_W, WINDOW_H = 600, 800
+BLOCK_SIZE = 20
+CUP_H, CUP_W = 20, 10
+SIDE_FREQ, DOWN_FREQ = 0.15, 0.1
+SIDE_MARGIN = (WINDOW_W - CUP_W * BLOCK_SIZE) // 2
+TOP_MARGIN = WINDOW_H - (CUP_H * BLOCK_SIZE) - 5
 
-side_freq, down_freq = 0.15, 0.1  # передвижение в сторону и вниз
+# Цвета
+COLORS = [(0, 0, 255), (0, 225, 0), (225, 0, 0), (225, 225, 0)]
+LIGHTCOLORS = [(30, 30, 255), (50, 255, 50), (255, 30, 30), (255, 255, 30)]
+WHITE, GRAY, BLUE = (255, 255, 255), (185, 185, 185), (102, 0, 255)
+BRD_COLOR, BG_COLOR, TXT_COLOR, TITLE_COLOR, INFO_COLOR = WHITE, BLUE, WHITE, COLORS[3], COLORS[0]
 
-side_margin = int((window_w - cup_w * block) / 2)
-top_margin = window_h - (cup_h * block) - 5
+# Фигуры
+FIGURES = {
+    'S': [['ooooo', 'ooooo', 'ooxxo', 'oxxoo', 'ooooo'], ['ooooo', 'ooxoo', 'ooxxo', 'oooxo', 'ooooo']],
+    'Z': [['ooooo', 'ooooo', 'oxxoo', 'ooxxo', 'ooooo'], ['ooooo', 'ooxoo', 'oxxoo', 'oxooo', 'ooooo']],
+    'J': [['ooooo', 'oxooo', 'oxxxo', 'ooooo', 'ooooo'], ['ooooo', 'ooxxo', 'ooxoo', 'ooxoo', 'ooooo'],
+          ['ooooo', 'ooooo', 'oxxxo', 'oooxo', 'ooooo'], ['ooooo', 'ooxoo', 'ooxoo', 'oxxoo', 'ooooo']],
+    'L': [['ooooo', 'oooxo', 'oxxxo', 'ooooo', 'ooooo'], ['ooooo', 'ooxoo', 'ooxoo', 'ooxxo', 'ooooo'],
+          ['ooooo', 'ooooo', 'oxxxo', 'oxooo', 'ooooo'], ['ooooo', 'oxxoo', 'ooxoo', 'ooxoo', 'ooooo']],
+    'I': [['ooxoo', 'ooxoo', 'ooxoo', 'ooxoo', 'ooooo'], ['ooooo', 'ooooo', 'xxxxo', 'ooooo', 'ooooo']],
+    'O': [['ooooo', 'ooooo', 'oxxoo', 'oxxoo', 'ooooo']],
+    'T': [['ooooo', 'ooxoo', 'oxxxo', 'ooooo', 'ooooo'], ['ooooo', 'ooxoo', 'ooxxo', 'ooxoo', 'ooooo'],
+          ['ooooo', 'ooooo', 'oxxxo', 'ooxoo', 'ooooo'], ['ooooo', 'ooxoo', 'oxxoo', 'ooxoo', 'ooooo']]
+}
 
-colors = ((0, 0, 225), (0, 225, 0), (225, 0, 0), (225, 225, 0))  # синий, зеленый, красный, желтый
-lightcolors = ((30, 30, 255), (50, 255, 50), (255, 30, 30),
-               (255, 255, 30))  # светло-синий, светло-зеленый, светло-красный, светло-желтый
+class TetrisGame:
+    def __init__(self):
+        pg.init()
+        pg.mixer.init()
+        self.fps_clock = pg.time.Clock()
+        self.display_surf = pg.display.set_mode((WINDOW_W, WINDOW_H))
+        self.basic_font = pg.font.SysFont('arial', 20)
+        self.big_font = pg.font.SysFont('verdana', 45)
+        pg.display.set_caption('Тетрис Lite')
 
-white, gray, black = (255, 255, 255), (185, 185, 185), (0, 0, 0)
-brd_color, bg_color, txt_color, title_color, info_color = white, black, white, colors[3], colors[0]
+        self.load_sounds()
+        self.cup = self.empty_cup()
+        self.points = 0
+        self.level, self.fall_speed = self.calc_speed(self.points)
+        self.falling_fig = self.get_new_fig()
+        self.next_fig = self.get_new_fig()
+        self.game_over = False
+        self.state = 'MAIN_MENU'
+        self.paused = False
 
-fig_w, fig_h = 5, 5
-empty = 'o'
+    def load_sounds(self):
+        pg.mixer.music.load("Tetris 1989 - Alexey Pazhitnov.mp3")
+        self.game_over_sound = pg.mixer.Sound("Player Mode - Game Over.mp3")
+        self.title_sound = pg.mixer.Sound("Title.mp3")
 
-figures = {'S': [['ooooo',
-                  'ooooo',
-                  'ooxxo',
-                  'oxxoo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooxoo',
-                  'ooxxo',
-                  'oooxo',
-                  'ooooo']],
-           'Z': [['ooooo',
-                  'ooooo',
-                  'oxxoo',
-                  'ooxxo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooxoo',
-                  'oxxoo',
-                  'oxooo',
-                  'ooooo']],
-           'J': [['ooooo',
-                  'oxooo',
-                  'oxxxo',
-                  'ooooo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooxxo',
-                  'ooxoo',
-                  'ooxoo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooooo',
-                  'oxxxo',
-                  'oooxo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooxoo',
-                  'ooxoo',
-                  'oxxoo',
-                  'ooooo']],
-           'L': [['ooooo',
-                  'oooxo',
-                  'oxxxo',
-                  'ooooo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooxoo',
-                  'ooxoo',
-                  'ooxxo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooooo',
-                  'oxxxo',
-                  'oxooo',
-                  'ooooo'],
-                 ['ooooo',
-                  'oxxoo',
-                  'ooxoo',
-                  'ooxoo',
-                  'ooooo']],
-           'I': [['ooxoo',
-                  'ooxoo',
-                  'ooxoo',
-                  'ooxoo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooooo',
-                  'xxxxo',
-                  'ooooo',
-                  'ooooo']],
-           'O': [['ooooo',
-                  'ooooo',
-                  'oxxoo',
-                  'oxxoo',
-                  'ooooo']],
-           'T': [['ooooo',
-                  'ooxoo',
-                  'oxxxo',
-                  'ooooo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooxoo',
-                  'ooxxo',
-                  'ooxoo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooooo',
-                  'oxxxo',
-                  'ooxoo',
-                  'ooooo'],
-                 ['ooooo',
-                  'ooxoo',
-                  'oxxoo',
-                  'ooxoo',
-                  'ooooo']]}
+    def empty_cup(self):
+        return [['o'] * CUP_H for _ in range(CUP_W)]
 
-music_paused = False
+    def get_new_fig(self):
+        shape = random.choice(list(FIGURES.keys()))
+        return {
+            'shape': shape,
+            'rotation': random.randint(0, len(FIGURES[shape]) - 1),
+            'x': int(CUP_W / 2) - int(5 / 2),
+            'y': -2,
+            'color': random.randint(0, len(COLORS) - 1)
+        }
 
-def pauseScreen():
-    global music_paused
-    pause = pg.Surface((600, 500), pg.SRCALPHA)
-    pause.fill((0, 0, 255, 127))
-    display_surf.blit(pause, (0, 0))
+    def calc_speed(self, points):
+        level = int(points / 10) + 1
+        fall_speed = 0.27 - (level * 0.02)
+        return level, fall_speed
 
-    if not music_paused:
-        print("Pausing music...")
-        pg.mixer.music.pause()
-        music_paused = True
-    else:
-        print("Unpausing music...")
-        pg.mixer.music.unpause()
-        music_paused = False
+    def check_pos(self, cup, fig, adj_x=0, adj_y=0):
+        for x in range(5):
+            for y in range(5):
+                above_cup = y + fig['y'] + adj_y < 0
+                if above_cup or FIGURES[fig['shape']][fig['rotation']][y][x] == 'o':
+                    continue
+                if not self.in_cup(x + fig['x'] + adj_x, y + fig['y'] + adj_y):
+                    return False
+                if cup[x + fig['x'] + adj_x][y + fig['y'] + adj_y] != 'o':
+                    return False
+        return True
 
-def main():
-    global fps_clock, display_surf, basic_font, big_font
-    pg.init()
-    pg.mixer.init()
-    pg.mixer.music.load("Tetris 1989 - Alexey Pazhitnov.mp3")  # Добавьте файл с музыкой
-    pg.mixer.music.play(-1)
+    def in_cup(self, x, y):
+        return 0 <= x < CUP_W and y < CUP_H
 
-    fps_clock = pg.time.Clock()
-    display_surf = pg.display.set_mode((window_w, window_h))
-    basic_font = pg.font.SysFont('arial', 20)
-    big_font = pg.font.SysFont('verdana', 45)
-    pg.display.set_caption('Тетрис Lite')
-    showText('Тетрис Lite')
+    def add_to_cup(self, cup, fig):
+        for x in range(5):
+            for y in range(5):
+                if FIGURES[fig['shape']][fig['rotation']][y][x] != 'o':
+                    cup[x + fig['x']][y + fig['y']] = fig['color']
 
-    while True:  # начинаем игру
-        runTetris()
-        pauseScreen()
-        showText('Игра закончена')
+    def is_completed(self, cup, y):
+        return all(cup[x][y] != 'o' for x in range(CUP_W))
 
-def runTetris():
-    global music_paused
-    cup = emptycup()
-    last_move_down = time.time()
-    last_side_move = time.time()
-    last_fall = time.time()
-    going_down = False
-    going_left = False
-    going_right = False
-    points = 0
-    level, fall_speed = calcSpeed(points)
-    fallingFig = getNewFig()
-    nextFig = getNewFig()
+    def clear_completed(self, cup):
+        removed_lines = 0
+        y = CUP_H - 1
+        while y >= 0:
+            if self.is_completed(cup, y):
+                for push_down_y in range(y, 0, -1):
+                    for x in range(CUP_W):
+                        cup[x][push_down_y] = cup[x][push_down_y - 1]
+                for x in range(CUP_W):
+                    cup[x][0] = 'o'
+                removed_lines += 1
+            else:
+                y -= 1
+        return removed_lines
 
-    while True:
-        if fallingFig == None:
-            # если нет падающих фигур, генерируем новую
-            fallingFig = nextFig
-            nextFig = getNewFig()
-            last_fall = time.time()
+    def convert_coords(self, block_x, block_y):
+        return (SIDE_MARGIN + (block_x * BLOCK_SIZE)), (TOP_MARGIN + (block_y * BLOCK_SIZE))
 
-            if not checkPos(cup, fallingFig):
-                return  # если на игровом поле нет свободного места - игра закончена
-        quitGame()
-        for event in pg.event.get():
-            if event.type == KEYUP:
-                if event.key == K_SPACE:
-                    print("Space key released")
-                    pauseScreen()
-                    showText('Пауза')
-                    last_fall = time.time()
-                    last_move_down = time.time()
-                    last_side_move = time.time()
-                elif event.key == K_LEFT:
-                    going_left = False
-                elif event.key == K_RIGHT:
-                    going_right = False
-                elif event.key == K_DOWN:
-                    going_down = False
+    def draw_block(self, block_x, block_y, color, pixel_x=None, pixel_y=None):
+        if color == 'o':
+            return
+        if pixel_x is None and pixel_y is None:
+            pixel_x, pixel_y = self.convert_coords(block_x, block_y)
 
-            elif event.type == KEYDOWN:
-                # перемещение фигуры вправо и влево
-                if event.key == K_LEFT and checkPos(cup, fallingFig, adjX=-1):
-                    fallingFig['x'] -= 1
-                    going_left = True
-                    going_right = False
-                    last_side_move = time.time()
+        pg.draw.rect(self.display_surf, COLORS[color], (pixel_x + 1, pixel_y + 1, BLOCK_SIZE - 1, BLOCK_SIZE - 1), 0, 3)
+        pg.draw.rect(self.display_surf, LIGHTCOLORS[color], (pixel_x + 1, pixel_y + 1, BLOCK_SIZE - 4, BLOCK_SIZE - 4), 0, 3)
+        pg.draw.circle(self.display_surf, COLORS[color], (pixel_x + BLOCK_SIZE / 2, pixel_y + BLOCK_SIZE / 2), 5)
 
-                elif event.key == K_RIGHT and checkPos(cup, fallingFig, adjX=1):
-                    fallingFig['x'] += 1
-                    going_right = True
-                    going_left = False
-                    last_side_move = time.time()
+    def game_cup(self, cup):
+        pg.draw.rect(self.display_surf, BRD_COLOR, (SIDE_MARGIN - 4, TOP_MARGIN - 4, (CUP_W * BLOCK_SIZE) + 8, (CUP_H * BLOCK_SIZE) + 8), 5)
+        pg.draw.rect(self.display_surf, BG_COLOR, (SIDE_MARGIN, TOP_MARGIN, BLOCK_SIZE * CUP_W, BLOCK_SIZE * CUP_H))
+        for x in range(CUP_W):
+            for y in range(CUP_H):
+                self.draw_block(x, y, cup[x][y])
 
-                # поворачиваем фигуру, если есть место
-                elif event.key == K_UP:
-                    fallingFig['rotation'] = (fallingFig['rotation'] + 1) % len(figures[fallingFig['shape']])
-                    if not checkPos(cup, fallingFig):
-                        fallingFig['rotation'] = (fallingFig['rotation'] - 1) % len(figures[fallingFig['shape']])
+    def draw_title(self):
+        title_surf = self.big_font.render('Тетрис Lite', True, TITLE_COLOR)
+        title_rect = title_surf.get_rect()
+        title_rect.topleft = (WINDOW_W - 425, 30)
+        self.display_surf.blit(title_surf, title_rect)
 
-                # ускоряем падение фигуры
-                elif event.key == K_DOWN:
-                    going_down = True
-                    if checkPos(cup, fallingFig, adjY=1):
-                        fallingFig['y'] += 1
-                    last_move_down = time.time()
+    def draw_info(self, points, level):
+        points_surf = self.basic_font.render(f'Баллы: {points}', True, TXT_COLOR)
+        points_rect = points_surf.get_rect()
+        points_rect.topleft = (WINDOW_W - 550, 180)
+        self.display_surf.blit(points_surf, points_rect)
 
-                # мгновенный сброс вниз
-                elif event.key == K_RETURN:
-                    going_down = False
-                    going_left = False
-                    going_right = False
-                    for i in range(1, cup_h):
-                        if not checkPos(cup, fallingFig, adjY=i):
-                            break
-                    fallingFig['y'] += i - 1
+        level_surf = self.basic_font.render(f'Уровень: {level}', True, TXT_COLOR)
+        level_rect = level_surf.get_rect()
+        level_rect.topleft = (WINDOW_W - 550, 250)
+        self.display_surf.blit(level_surf, level_rect)
 
-        # управление падением фигуры при удержании клавиш
-        if (going_left or going_right) and time.time() - last_side_move > side_freq:
-            if going_left and checkPos(cup, fallingFig, adjX=-1):
-                fallingFig['x'] -= 1
-            elif going_right and checkPos(cup, fallingFig, adjX=1):
-                fallingFig['x'] += 1
-            last_side_move = time.time()
+        pause_surf = self.basic_font.render('Пауза: пробел', True, INFO_COLOR)
+        pause_rect = pause_surf.get_rect()
+        pause_rect.topleft = (WINDOW_W - 550, 420)
+        self.display_surf.blit(pause_surf, pause_rect)
 
-        if going_down and time.time() - last_move_down > down_freq and checkPos(cup, fallingFig, adjY=1):
-            fallingFig['y'] += 1
-            last_move_down = time.time()
+        esc_surf = self.basic_font.render('Выход: Esc', True, INFO_COLOR)
+        esc_rect = esc_surf.get_rect()
+        esc_rect.topleft = (WINDOW_W - 550, 450)
+        self.display_surf.blit(esc_surf, esc_rect)
 
-        if time.time() - last_fall > fall_speed:  # свободное падение фигуры
-            if not checkPos(cup, fallingFig, adjY=1):  # проверка "приземления" фигуры
-                addToCup(cup, fallingFig)  # фигура приземлилась, добавляем ее в содержимое стакана
-                points += clearCompleted(cup)
-                level, fall_speed = calcSpeed(points)
-                fallingFig = None
-            else:  # фигура пока не приземлилась, продолжаем движение вниз
-                fallingFig['y'] += 1
-                last_fall = time.time()
+    def draw_fig(self, fig, pixel_x=None, pixel_y=None):
+        fig_to_draw = FIGURES[fig['shape']][fig['rotation']]
+        if pixel_x is None and pixel_y is None:
+            pixel_x, pixel_y = self.convert_coords(fig['x'], fig['y'])
 
-        # рисуем окно игры со всеми надписями
-        display_surf.fill(bg_color)
-        drawTitle()
-        gamecup(cup)
-        drawInfo(points, level)
-        drawnextFig(nextFig)
-        if fallingFig != None:
-            drawFig(fallingFig)
+        for x in range(5):
+            for y in range(5):
+                if fig_to_draw[y][x] != 'o':
+                    self.draw_block(None, None, fig['color'], pixel_x + (x * BLOCK_SIZE), pixel_y + (y * BLOCK_SIZE))
+
+    def draw_next_fig(self, fig):
+        next_surf = self.basic_font.render('Следующая:', True, TXT_COLOR)
+        next_rect = next_surf.get_rect()
+        next_rect.topleft = (WINDOW_W - 150, 180)
+        self.display_surf.blit(next_surf, next_rect)
+        self.draw_fig(fig, pixel_x=WINDOW_W - 150, pixel_y=230)
+
+    def txt_objects(self, text, font, color):
+        surf = font.render(text, True, color)
+        return surf, surf.get_rect()
+
+    def show_text(self, text):
+        title_surf, title_rect = self.txt_objects(text, self.big_font, TITLE_COLOR)
+        title_rect.center = (WINDOW_W // 2, WINDOW_H // 2)
+        self.display_surf.blit(title_surf, title_rect)
+
+        press_key_surf, press_key_rect = self.txt_objects('Нажмите любую клавишу для продолжения', self.basic_font, TITLE_COLOR)
+        press_key_rect.center = (WINDOW_W // 2, WINDOW_H // 2 + 100)
+        self.display_surf.blit(press_key_surf, press_key_rect)
+
         pg.display.update()
-        fps_clock.tick(fps)
 
-def txtObjects(text, font, color):
-    surf = font.render(text, True, color)
-    return surf, surf.get_rect()
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                    waiting = False
+            self.fps_clock.tick()
 
-def stopGame():
-    pg.quit()
-    sys.exit()
+    def pause_screen(self):
+        pause = pg.Surface((WINDOW_W, WINDOW_H), pg.SRCALPHA)
+        pause.fill((0, 0, 255, 127))
+        self.display_surf.blit(pause, (0, 0))
 
-def checkKeys():
-    quitGame()
-
-    for event in pg.event.get([KEYDOWN, KEYUP]):
-        if event.type == KEYDOWN:
-            continue
-        return event.key
-    return None
-
-def showText(text):
-    titleSurf, titleRect = txtObjects(text, big_font, title_color)
-    titleRect.center = (int(window_w / 2) - 3, int(window_h / 2) - 3)
-    display_surf.blit(titleSurf, titleRect)
-
-    pressKeySurf, pressKeyRect = txtObjects('Нажмите любую клавишу для продолжения', basic_font, title_color)
-    pressKeyRect.center = (int(window_w / 2), int(window_h / 2) + 100)
-    display_surf.blit(pressKeySurf, pressKeyRect)
-
-    while checkKeys() == None:
-        pg.display.update()
-        fps_clock.tick()
-
-def quitGame():
-    for event in pg.event.get(QUIT):  # проверка всех событий, приводящих к выходу из игры
-        stopGame()
-    for event in pg.event.get(KEYUP):
-        if event.key == K_ESCAPE:
-            stopGame()
-        pg.event.post(event)
-
-def calcSpeed(points):
-    # вычисляет уровень
-    level = int(points / 10) + 1
-    fall_speed = 0.27 - (level * 0.02)
-    return level, fall_speed
-
-def getNewFig():
-    # возвращает новую фигуру со случайным цветом и углом поворота
-    shape = random.choice(list(figures.keys()))
-    newFigure = {'shape': shape,
-                 'rotation': random.randint(0, len(figures[shape]) - 1),
-                 'x': int(cup_w / 2) - int(fig_w / 2),
-                 'y': -2,
-                 'color': random.randint(0, len(colors) - 1)}
-    return newFigure
-
-def addToCup(cup, fig):
-    for x in range(fig_w):
-        for y in range(fig_h):
-            if figures[fig['shape']][fig['rotation']][y][x] != empty:
-                cup[x + fig['x']][y + fig['y']] = fig['color']
-
-def emptycup():
-    # создает пустой стакан
-    cup = []
-    for i in range(cup_w):
-        cup.append([empty] * cup_h)
-    return cup
-
-def incup(x, y):
-    return x >= 0 and x < cup_w and y < cup_h
-
-def checkPos(cup, fig, adjX=0, adjY=0):
-    # проверяет, находится ли фигура в границах стакана, не сталкиваясь с другими фигурами
-    for x in range(fig_w):
-        for y in range(fig_h):
-            abovecup = y + fig['y'] + adjY < 0
-            if abovecup or figures[fig['shape']][fig['rotation']][y][x] == empty:
-                continue
-            if not incup(x + fig['x'] + adjX, y + fig['y'] + adjY):
-                return False
-            if cup[x + fig['x'] + adjX][y + fig['y'] + adjY] != empty:
-                return False
-    return True
-
-def isCompleted(cup, y):
-    # проверяем наличие полностью заполненных рядов
-    for x in range(cup_w):
-        if cup[x][y] == empty:
-            return False
-    return True
-
-def clearCompleted(cup):
-    # Удаление заполненных рядов и сдвиг верхних рядов вниз
-    removed_lines = 0
-    y = cup_h - 1
-    while y >= 0:
-        if isCompleted(cup, y):
-            for pushDownY in range(y, 0, -1):
-                for x in range(cup_w):
-                    cup[x][pushDownY] = cup[x][pushDownY - 1]
-            for x in range(cup_w):
-                cup[x][0] = empty
-            removed_lines += 1
+        if pg.mixer.music.get_busy():
+            pg.mixer.music.pause()
         else:
-            y -= 1
-    return removed_lines
+            pg.mixer.music.unpause()
 
-def convertCoords(block_x, block_y):
-    return (side_margin + (block_x * block)), (top_margin + (block_y * block))
+        self.show_text('Пауза')
+        self.wait_for_key()
 
-def drawBlock(block_x, block_y, color, pixelx=None, pixely=None):
-    # отрисовка квадратных блоков, из которых состоят фигуры
-    if color == empty:
-        return
-    if pixelx == None and pixely == None:
-        pixelx, pixely = convertCoords(block_x, block_y)
-    pg.draw.rect(display_surf, colors[color], (pixelx + 1, pixely + 1, block - 1, block - 1), 0, 3)
-    pg.draw.rect(display_surf, lightcolors[color], (pixelx + 1, pixely + 1, block - 4, block - 4), 0, 3)
-    pg.draw.circle(display_surf, colors[color], (pixelx + block / 2, pixely + block / 2), 5)
+        if pg.mixer.music.get_busy():
+            pg.mixer.music.unpause()
 
-def gamecup(cup):
-    # граница игрового поля-стакана
-    pg.draw.rect(display_surf, brd_color, (side_margin - 4, top_margin - 4, (cup_w * block) + 8, (cup_h * block) + 8),
-                 5)
+    def quit_game(self):
+        for event in pg.event.get(pg.QUIT):
+            self.stop_game()
+        for event in pg.event.get(pg.KEYUP):
+            if event.key == pg.K_ESCAPE:
+                self.stop_game()
+            pg.event.post(event)
 
-    # фон игрового поля
-    pg.draw.rect(display_surf, bg_color, (side_margin, top_margin, block * cup_w, block * cup_h))
-    for x in range(cup_w):
-        for y in range(cup_h):
-            drawBlock(x, y, cup[x][y])
+    def stop_game(self):
+        pg.quit()
+        sys.exit()
 
-def drawTitle():
-    titleSurf = big_font.render('Тетрис Lite', True, title_color)
-    titleRect = titleSurf.get_rect()
-    titleRect.topleft = (window_w - 425, 30)
-    display_surf.blit(titleSurf, titleRect)
+    def run(self):
+        while True:
+            if self.state == 'MAIN_MENU':
+                self.main_menu()
+            elif self.state == 'GAME':
+                self.run_tetris()
+            elif self.state == 'GAME_OVER':
+                self.game_over()
 
-def drawInfo(points, level):
-    pointsSurf = basic_font.render(f'Баллы: {points}', True, txt_color)
-    pointsRect = pointsSurf.get_rect()
-    pointsRect.topleft = (window_w - 550, 180)
-    display_surf.blit(pointsSurf, pointsRect)
+    def main_menu(self):
+        self.title_sound.play()
+        self.show_text('Тетрис Lite')
+        self.wait_for_key()
+        self.title_sound.stop()
+        self.state = 'GAME'
+        pg.mixer.music.play(-1)
 
-    levelSurf = basic_font.render(f'Уровень: {level}', True, txt_color)
-    levelRect = levelSurf.get_rect()
-    levelRect.topleft = (window_w - 550, 250)
-    display_surf.blit(levelSurf, levelRect)
+    def game_over(self):
+        self.game_over_sound.play()
+        self.pause_screen()
+        self.show_text('Игра закончена')
+        self.wait_for_key()
+        self.game_over_sound.stop()
+        self.state = 'MAIN_MENU'
 
-    pausebSurf = basic_font.render('Пауза: пробел', True, info_color)
-    pausebRect = pausebSurf.get_rect()
-    pausebRect.topleft = (window_w - 550, 420)
-    display_surf.blit(pausebSurf, pausebRect)
+    def run_tetris(self):
+        self.cup = self.empty_cup()
+        last_move_down = pg.time.get_ticks()
+        last_side_move = pg.time.get_ticks()
+        last_fall = pg.time.get_ticks()
+        going_down = False
+        going_left = False
+        going_right = False
+        self.points = 0
+        self.level, self.fall_speed = self.calc_speed(self.points)
+        self.falling_fig = self.get_new_fig()
+        self.next_fig = self.get_new_fig()
+        self.game_over = False
 
-    escbSurf = basic_font.render('Выход: Esc', True, info_color)
-    escbRect = escbSurf.get_rect()
-    escbRect.topleft = (window_w - 550, 450)
-    display_surf.blit(escbSurf, escbRect)
+        pg.mixer.music.play(-1)
 
-def drawFig(fig, pixelx=None, pixely=None):
-    figToDraw = figures[fig['shape']][fig['rotation']]
-    if pixelx == None and pixely == None:
-        pixelx, pixely = convertCoords(fig['x'], fig['y'])
+        while not self.game_over:
+            if self.falling_fig is None:
+                self.falling_fig = self.next_fig
+                self.next_fig = self.get_new_fig()
+                last_fall = pg.time.get_ticks()
 
-    # отрисовка элементов фигур
-    for x in range(fig_w):
-        for y in range(fig_h):
-            if figToDraw[y][x] != empty:
-                drawBlock(None, None, fig['color'], pixelx + (x * block), pixely + (y * block))
+                if not self.check_pos(self.cup, self.falling_fig):
+                    self.game_over = True
 
-def drawnextFig(fig):  # превью следующей фигуры
-    nextSurf = basic_font.render('Следующая:', True, txt_color)
-    nextRect = nextSurf.get_rect()
-    nextRect.topleft = (window_w - 150, 180)
-    display_surf.blit(nextSurf, nextRect)
-    drawFig(fig, pixelx=window_w - 150, pixely=230)
+            self.quit_game()
+            for event in pg.event.get():
+                if event.type == pg.KEYUP:
+                    if event.key == pg.K_SPACE:
+                        self.paused = not self.paused
+                        if self.paused:
+                            self.pause_screen()
+                        last_fall = pg.time.get_ticks()
+                        last_move_down = pg.time.get_ticks()
+                        last_side_move = pg.time.get_ticks()
+                    elif event.key == pg.K_LEFT:
+                        going_left = False
+                    elif event.key == pg.K_RIGHT:
+                        going_right = False
+                    elif event.key == pg.K_DOWN:
+                        going_down = False
+
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_LEFT and self.check_pos(self.cup, self.falling_fig, adj_x=-1):
+                        self.falling_fig['x'] -= 1
+                        going_left = True
+                        going_right = False
+                        last_side_move = pg.time.get_ticks()
+
+                    elif event.key == pg.K_RIGHT and self.check_pos(self.cup, self.falling_fig, adj_x=1):
+                        self.falling_fig['x'] += 1
+                        going_right = True
+                        going_left = False
+                        last_side_move = pg.time.get_ticks()
+
+                    elif event.key == pg.K_UP:
+                        self.falling_fig['rotation'] = (self.falling_fig['rotation'] + 1) % len(FIGURES[self.falling_fig['shape']])
+                        if not self.check_pos(self.cup, self.falling_fig):
+                            self.falling_fig['rotation'] = (self.falling_fig['rotation'] - 1) % len(FIGURES[self.falling_fig['shape']])
+
+                    elif event.key == pg.K_DOWN:
+                        going_down = True
+                        if self.check_pos(self.cup, self.falling_fig, adj_y=1):
+                            self.falling_fig['y'] += 1
+                        last_move_down = pg.time.get_ticks()
+
+                    elif event.key == pg.K_RETURN:
+                        going_down = False
+                        going_left = False
+                        going_right = False
+                        for i in range(1, CUP_H):
+                            if not self.check_pos(self.cup, self.falling_fig, adj_y=i):
+                                break
+                        self.falling_fig['y'] += i - 1
+
+            if not self.paused:
+                if (going_left or going_right) and pg.time.get_ticks() - last_side_move > SIDE_FREQ * 1000:
+                    if going_left and self.check_pos(self.cup, self.falling_fig, adj_x=-1):
+                        self.falling_fig['x'] -= 1
+                    elif going_right and self.check_pos(self.cup, self.falling_fig, adj_x=1):
+                        self.falling_fig['x'] += 1
+                    last_side_move = pg.time.get_ticks()
+
+                if going_down and pg.time.get_ticks() - last_move_down > DOWN_FREQ * 1000 and self.check_pos(self.cup, self.falling_fig, adj_y=1):
+                    self.falling_fig['y'] += 1
+                    last_move_down = pg.time.get_ticks()
+
+                if pg.time.get_ticks() - last_fall > self.fall_speed * 1000:
+                    if not self.check_pos(self.cup, self.falling_fig, adj_y=1):
+                        self.add_to_cup(self.cup, self.falling_fig)
+                        self.points += self.clear_completed(self.cup)
+                        self.level, self.fall_speed = self.calc_speed(self.points)
+                        self.falling_fig = None
+                    else:
+                        self.falling_fig['y'] += 1
+                        last_fall = pg.time.get_ticks()
+
+            self.display_surf.fill(BG_COLOR)
+            self.draw_title()
+            self.game_cup(self.cup)
+            self.draw_info(self.points, self.level)
+            self.draw_next_fig(self.next_fig)
+            if self.falling_fig is not None:
+                self.draw_fig(self.falling_fig)
+            pg.display.update()
+            self.fps_clock.tick(FPS)
+
+        pg.mixer.music.stop()
+        self.state = 'GAME_OVER'
 
 if __name__ == '__main__':
-    main()
+    game = TetrisGame()
+    game.run()
