@@ -42,19 +42,26 @@ class TetrisGame:
         pg.display.set_caption('Тетрис Lite')
 
         self.load_sounds()
+        self.reset_game()
+
+    def reset_game(self):
         self.cup = self.empty_cup()
         self.points = 0
         self.level, self.fall_speed = self.calc_speed(self.points)
         self.falling_fig = self.get_new_fig()
         self.next_fig = self.get_new_fig()
-        self.game_over = False
+        self.game_over_flag = False
         self.state = 'MAIN_MENU'
         self.paused = False
 
     def load_sounds(self):
-        pg.mixer.music.load("Tetris 1989 - Alexey Pazhitnov.mp3")
-        self.game_over_sound = pg.mixer.Sound("Player Mode - Game Over.mp3")
-        self.title_sound = pg.mixer.Sound("Title.mp3")
+        try:
+            pg.mixer.music.load("Tetris 1989 - Alexey Pazhitnov.mp3")
+            self.game_over_sound = pg.mixer.Sound("Player Mode - Game Over.mp3")
+            self.title_sound = pg.mixer.Sound("Title.mp3")
+        except Exception as e:
+            print(f"Ошибка загрузки звуков: {e}")
+            sys.exit()
 
     def empty_cup(self):
         return [['o'] * CUP_H for _ in range(CUP_W)]
@@ -72,6 +79,7 @@ class TetrisGame:
     def calc_speed(self, points):
         level = int(points / 10) + 1
         fall_speed = 0.27 - (level * 0.02)
+        fall_speed = max(fall_speed, 0.01)
         return level, fall_speed
 
     def check_pos(self, cup, fig, adj_x=0, adj_y=0):
@@ -111,6 +119,7 @@ class TetrisGame:
                 removed_lines += 1
             else:
                 y -= 1
+        self.points += removed_lines * 100  # Начисление очков за линии
         return removed_lines
 
     def convert_coords(self, block_x, block_y):
@@ -182,6 +191,7 @@ class TetrisGame:
         return surf, surf.get_rect()
 
     def show_text(self, text):
+        self.display_surf.fill(BG_COLOR)
         title_surf, title_rect = self.txt_objects(text, self.big_font, TITLE_COLOR)
         title_rect.center = (WINDOW_W // 2, WINDOW_H // 2)
         self.display_surf.blit(title_surf, title_rect)
@@ -195,34 +205,23 @@ class TetrisGame:
     def wait_for_key(self):
         waiting = True
         while waiting:
+            pg.event.pump()
             for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.stop_game()
                 if event.type == pg.KEYDOWN:
                     waiting = False
-            self.fps_clock.tick()
+            self.fps_clock.tick(FPS)
 
     def pause_screen(self):
         pause = pg.Surface((WINDOW_W, WINDOW_H), pg.SRCALPHA)
         pause.fill((0, 0, 255, 127))
         self.display_surf.blit(pause, (0, 0))
 
-        if pg.mixer.music.get_busy():
-            pg.mixer.music.pause()
-        else:
-            pg.mixer.music.unpause()
-
+        pg.mixer.music.pause()
         self.show_text('Пауза')
         self.wait_for_key()
-
-        if pg.mixer.music.get_busy():
-            pg.mixer.music.unpause()
-
-    def quit_game(self):
-        for event in pg.event.get(pg.QUIT):
-            self.stop_game()
-        for event in pg.event.get(pg.KEYUP):
-            if event.key == pg.K_ESCAPE:
-                self.stop_game()
-            pg.event.post(event)
+        pg.mixer.music.unpause()
 
     def stop_game(self):
         pg.quit()
@@ -235,7 +234,7 @@ class TetrisGame:
             elif self.state == 'GAME':
                 self.run_tetris()
             elif self.state == 'GAME_OVER':
-                self.game_over()
+                self.show_game_over()
 
     def main_menu(self):
         self.title_sound.play()
@@ -245,12 +244,14 @@ class TetrisGame:
         self.state = 'GAME'
         pg.mixer.music.play(-1)
 
-    def game_over(self):
+    def show_game_over(self):
         self.game_over_sound.play()
-        self.pause_screen()
+        self.display_surf.fill(BG_COLOR)
         self.show_text('Игра закончена')
+        pg.display.update()
         self.wait_for_key()
         self.game_over_sound.stop()
+        self.reset_game()
         self.state = 'MAIN_MENU'
 
     def run_tetris(self):
@@ -261,72 +262,63 @@ class TetrisGame:
         going_down = False
         going_left = False
         going_right = False
-        self.points = 0
-        self.level, self.fall_speed = self.calc_speed(self.points)
-        self.falling_fig = self.get_new_fig()
-        self.next_fig = self.get_new_fig()
-        self.game_over = False
+        self.game_over_flag = False
 
-        pg.mixer.music.play(-1)
-
-        while not self.game_over:
+        while not self.game_over_flag:
             if self.falling_fig is None:
                 self.falling_fig = self.next_fig
                 self.next_fig = self.get_new_fig()
                 last_fall = pg.time.get_ticks()
 
                 if not self.check_pos(self.cup, self.falling_fig):
-                    self.game_over = True
+                    self.game_over_flag = True
 
-            self.quit_game()
             for event in pg.event.get():
-                if event.type == pg.KEYUP:
+                if event.type == pg.QUIT:
+                    self.stop_game()
+                elif event.type == pg.KEYUP:
                     if event.key == pg.K_SPACE:
                         self.paused = not self.paused
                         if self.paused:
                             self.pause_screen()
-                        last_fall = pg.time.get_ticks()
-                        last_move_down = pg.time.get_ticks()
-                        last_side_move = pg.time.get_ticks()
+                            last_fall = pg.time.get_ticks()
+                            last_move_down = pg.time.get_ticks()
+                            last_side_move = pg.time.get_ticks()
                     elif event.key == pg.K_LEFT:
                         going_left = False
                     elif event.key == pg.K_RIGHT:
                         going_right = False
                     elif event.key == pg.K_DOWN:
                         going_down = False
-
                 elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_LEFT and self.check_pos(self.cup, self.falling_fig, adj_x=-1):
+                    if event.key == pg.K_ESCAPE:
+                        self.stop_game()
+                    elif event.key == pg.K_LEFT and self.check_pos(self.cup, self.falling_fig, adj_x=-1):
                         self.falling_fig['x'] -= 1
                         going_left = True
                         going_right = False
                         last_side_move = pg.time.get_ticks()
-
                     elif event.key == pg.K_RIGHT and self.check_pos(self.cup, self.falling_fig, adj_x=1):
                         self.falling_fig['x'] += 1
                         going_right = True
                         going_left = False
                         last_side_move = pg.time.get_ticks()
-
                     elif event.key == pg.K_UP:
-                        self.falling_fig['rotation'] = (self.falling_fig['rotation'] + 1) % len(FIGURES[self.falling_fig['shape']])
+                        new_rotation = (self.falling_fig['rotation'] + 1) % len(FIGURES[self.falling_fig['shape']])
+                        old_rotation = self.falling_fig['rotation']
+                        self.falling_fig['rotation'] = new_rotation
                         if not self.check_pos(self.cup, self.falling_fig):
-                            self.falling_fig['rotation'] = (self.falling_fig['rotation'] - 1) % len(FIGURES[self.falling_fig['shape']])
-
+                            self.falling_fig['rotation'] = old_rotation
                     elif event.key == pg.K_DOWN:
                         going_down = True
                         if self.check_pos(self.cup, self.falling_fig, adj_y=1):
                             self.falling_fig['y'] += 1
                         last_move_down = pg.time.get_ticks()
-
                     elif event.key == pg.K_RETURN:
-                        going_down = False
-                        going_left = False
-                        going_right = False
-                        for i in range(1, CUP_H):
-                            if not self.check_pos(self.cup, self.falling_fig, adj_y=i):
-                                break
-                        self.falling_fig['y'] += i - 1
+                        i = 0
+                        while self.check_pos(self.cup, self.falling_fig, adj_y=i + 1):
+                            i += 1
+                        self.falling_fig['y'] += i
 
             if not self.paused:
                 if (going_left or going_right) and pg.time.get_ticks() - last_side_move > SIDE_FREQ * 1000:
