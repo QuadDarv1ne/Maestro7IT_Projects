@@ -2,17 +2,14 @@ import psutil
 import GPUtil
 from tabulate import tabulate
 import flet as ft
-import threading
-import time
-import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
+import asyncio
 
-# Функции для получения метрик
 def get_cpu_usage():
+    """Получает текущий процент использования CPU."""
     return psutil.cpu_percent(interval=1)
 
 def get_memory_usage():
+    """Получает текущие статистики использования памяти."""
     memory = psutil.virtual_memory()
     return {
         'Всего 💾': f'{memory.total / (1024 ** 3):.2f} ГБ',
@@ -22,6 +19,7 @@ def get_memory_usage():
     }
 
 def get_disk_usage():
+    """Получает статистику использования диска для всех разделов."""
     disk_info = []
     partitions = psutil.disk_partitions()
     for partition in partitions:
@@ -39,6 +37,7 @@ def get_disk_usage():
     return disk_info
 
 def get_disk_io():
+    """Получает статистику ввода-вывода диска."""
     disk_io = psutil.disk_io_counters()
     return {
         'Чтение (байт) 📄': disk_io.read_bytes,
@@ -48,6 +47,7 @@ def get_disk_io():
     }
 
 def get_network_usage():
+    """Получает статистику использования сети."""
     net_io = psutil.net_io_counters()
     return {
         'Отправлено (байт) 📤': net_io.bytes_sent,
@@ -57,6 +57,7 @@ def get_network_usage():
     }
 
 def get_gpu_usage():
+    """Получает статистику использования GPU."""
     try:
         gpus = GPUtil.getGPUs()
         gpu_list = []
@@ -74,6 +75,7 @@ def get_gpu_usage():
         return []
 
 def get_top_processes(n=20):
+    """Получает топ процессов по использованию CPU."""
     processes = []
     for proc in sorted(psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']),
                        key=lambda x: x.info['cpu_percent'],
@@ -89,153 +91,21 @@ def get_top_processes(n=20):
             pass
     return processes
 
-# Функция для создания графиков
-def plot_metrics(cpu_data, memory_data):
-    plt.switch_backend('Agg')  # Use a non-GUI backend
-    fig, ax = plt.subplots(2, 1, figsize=(10, 8))
-
-    # График использования CPU
-    ax[0].plot(cpu_data, label="CPU Usage %", color="blue")
-    ax[0].set_title("CPU Usage Over Time")
-    ax[0].set_xlabel("Time (s)")
-    ax[0].set_ylabel("Usage (%)")
-    ax[0].legend()
-
-    # График использования памяти
-    ax[1].plot(memory_data, label="Memory Usage %", color="orange")
-    ax[1].set_title("Memory Usage Over Time")
-    ax[1].set_xlabel("Time (s)")
-    ax[1].set_ylabel("Usage (%)")
-    ax[1].legend()
-
-    plt.tight_layout()
-
-    # Сохраняем график в буфер
-    buf = BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
-    return buf
-
-# Основная функция для инициализации и запуска приложения Flet
-def main(page: ft.Page):
+async def main(page: ft.Page):
+    """Основная функция для инициализации и запуска приложения Flet."""
     page.title = "Мониторинг системы 🖥️"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.MainAxisAlignment.START
     page.padding = 20
     page.scroll = ft.ScrollMode.AUTO
 
-    # Создание карточек для метрик
-    cpu_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Загрузка CPU 💻", style="headlineSmall"),
-                    ft.Text("", style="bodyMedium", color=ft.colors.BLUE_GREY)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
-
-    memory_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Использование памяти 💾", style="headlineSmall"),
-                    ft.Text("", style="bodyMedium", color=ft.colors.BLUE_GREY)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
-
-    disk_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Использование диска 💿", style="headlineSmall"),
-                    ft.Text("", style="bodyMedium", color=ft.colors.BLUE_GREY)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
-
-    disk_io_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Диск I/O 📄", style="headlineSmall"),
-                    ft.Text("", style="bodyMedium", color=ft.colors.BLUE_GREY)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
-
-    network_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Сеть 🌐", style="headlineSmall"),
-                    ft.Text("", style="bodyMedium", color=ft.colors.BLUE_GREY)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
-
-    gpu_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("GPU 🎮", style="headlineSmall"),
-                    ft.Text("", style="bodyMedium", color=ft.colors.BLUE_GREY)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
-
-    processes_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Топ процессов 🔝", style="headlineSmall"),
-                    ft.Text("", style="bodyMedium", color=ft.colors.BLUE_GREY)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
-
-    graph_card = ft.Card(
-        content=ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Графики 📈", style="headlineSmall"),
-                    ft.Image(src="", width=600, height=400)
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                spacing=5
-            ),
-            padding=10
-        )
-    )
+    cpu_text = ft.Text(style="headlineSmall", color=ft.Colors.BLUE_GREY)
+    memory_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
+    disk_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
+    disk_io_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
+    network_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
+    gpu_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
+    processes_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
 
     theme_dropdown = ft.Dropdown(
         options=[
@@ -247,11 +117,12 @@ def main(page: ft.Page):
         ],
         on_change=lambda e: change_theme(e, page),
         width=150,
-        bgcolor=ft.colors.WHITE,
+        bgcolor=ft.Colors.WHITE,
     )
 
-    def update_metrics():
-        try:
+    async def update_metrics():
+        """Обновляет системные метрики в интерфейсе Flet."""
+        while True:
             cpu_usage = get_cpu_usage()
             memory_usage = get_memory_usage()
             disk_usage = get_disk_usage()
@@ -260,26 +131,26 @@ def main(page: ft.Page):
             gpu_usage = get_gpu_usage()
             top_processes = get_top_processes()
 
-            cpu_card.content.content.controls[1].value = f"Загрузка CPU 💻: {cpu_usage}%"
-            memory_card.content.content.controls[1].value = "\n".join([f"{key}: {value}" for key, value in memory_usage.items()])
-            disk_card.content.content.controls[1].value = tabulate(disk_usage, headers=['Устройство', 'Всего 💿', 'Используется 📂', 'Свободно 🗄️', 'Процент использования 📉'], tablefmt="fancy_grid")
-            disk_io_card.content.content.controls[1].value = "\n".join([f"{key}: {value}" for key, value in disk_io.items()])
-            network_card.content.content.controls[1].value = "\n".join([f"{key}: {value}" for key, value in network_usage.items()])
-            gpu_card.content.content.controls[1].value = tabulate(gpu_usage, headers=['ID', 'Название', 'Загрузка', 'Использование памяти', 'Температура'], tablefmt="fancy_grid") if gpu_usage else "GPU не обнаружен или недоступен. 🚫"
-            processes_card.content.content.controls[1].value = tabulate(top_processes, headers=['PID', 'Название', 'CPU %', 'Память %'], tablefmt="fancy_grid")
+            cpu_text.value = f"Загрузка CPU 💻: {cpu_usage}%"
+            memory_text.value = "\n".join([f"{key}: {value}" for key, value in memory_usage.items()])
+            disk_text.value = tabulate(disk_usage, headers=['Устройство', 'Всего 💿', 'Используется 📂', 'Свободно 🗄️', 'Процент использования 📉'])
+            disk_io_text.value = "\n".join([f"{key}: {value}" for key, value in disk_io.items()])
+            network_text.value = "\n".join([f"{key}: {value}" for key, value in network_usage.items()])
+            gpu_text.value = tabulate(gpu_usage, headers=['ID', 'Название', 'Загрузка', 'Использование памяти', 'Температура']) if gpu_usage else "GPU не обнаружен или недоступен. 🚫"
+            processes_text.value = tabulate(top_processes, headers=['PID', 'Название', 'CPU %', 'Память %'])
 
             page.update()
-        except Exception as e:
-            print(f"Ошибка при обновлении метрик: {e}")
+            await asyncio.sleep(1)  # Обновление каждую секунду
 
     def change_theme(e, page):
+        """Изменяет тему приложения Flet."""
         selected_theme = e.control.value
         theme_map = {
             "Светлая": "light",
             "Темная": "dark",
-            "Оранжевая": ft.Theme(color_scheme_seed=ft.colors.ORANGE),
-            "Фиолетовая": ft.Theme(color_scheme_seed=ft.colors.PURPLE),
-            "Синяя": ft.Theme(color_scheme_seed=ft.colors.BLUE)
+            "Оранжевая": ft.Theme(color_scheme_seed=ft.Colors.ORANGE),
+            "Фиолетовая": ft.Theme(color_scheme_seed=ft.Colors.PURPLE),
+            "Синяя": ft.Theme(color_scheme_seed=ft.Colors.BLUE)
         }
         theme = theme_map.get(selected_theme, "light")
         if isinstance(theme, str):
@@ -288,72 +159,54 @@ def main(page: ft.Page):
             page.theme = theme
         page.update()
 
-    def refresh_metrics(e):
-        update_metrics()
+    async def refresh_metrics(e):
+        await update_metrics()
 
     refresh_button = ft.FloatingActionButton(
-        icon=ft.icons.REFRESH,
+        icon=ft.Icons.REFRESH,
         on_click=refresh_metrics,
-        bgcolor=ft.colors.BLUE
+        bgcolor=ft.Colors.BLUE
     )
 
-    # Создание вкладок для различных метрик
-    tabs = ft.Tabs(
-        selected_index=0,
-        tabs=[
-            ft.Tab(text="CPU", content=cpu_card),
-            ft.Tab(text="Память", content=memory_card),
-            ft.Tab(text="Диски", content=disk_card),
-            ft.Tab(text="Диск I/O", content=disk_io_card),
-            ft.Tab(text="Сеть", content=network_card),
-            ft.Tab(text="GPU", content=gpu_card),
-            ft.Tab(text="Процессы", content=processes_card),
-            ft.Tab(text="Графики", content=graph_card)
-        ],
-        expand=1
+    controls = [
+        ft.Text("Мониторинг системы", style="headlineMedium", color=ft.Colors.DEEP_PURPLE),
+        ft.Divider(height=10, color="purple"),
+        ft.Row(
+            controls=[
+                ft.Column([cpu_text, memory_text], col=6),
+                ft.Column([disk_text, disk_io_text], col=6)
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        ),
+        ft.Divider(height=10, color="transparent"),
+        network_text,
+        ft.Divider(height=10, color="transparent"),
+        gpu_text,
+        ft.Divider(height=10, color="transparent"),
+        processes_text,
+        ft.Divider(height=10, color="transparent"),
+    ]
+
+    buttons_container = ft.Container(
+        content=ft.Row(
+            [theme_dropdown, refresh_button],
+            alignment=ft.MainAxisAlignment.END
+        ),
+        alignment=ft.Alignment(right=10, bottom=10),  # Выравнивание по правому нижнему углу
+        margin=ft.Margin(10, 10, 10, 10),
+        padding=ft.Padding(10, 10, 10, 10),
+        bgcolor=ft.Colors.WHITE.with_opacity(0.8),  # Исправлено использование with_opacity
+        border_radius=10,
+        shadow=ft.BoxShadow(
+            blur_radius=10,
+            color=ft.Colors.BLACK.with_opacity(0.2),  # Исправлено использование with_opacity
+            offset=ft.Offset(0, 2)
+        ),
     )
 
-    # Создание контейнера для кнопок
-    buttons_container = ft.Stack(
-        controls=[
-            ft.Container(
-                content=ft.Row(
-                    [theme_dropdown, refresh_button],
-                    alignment=ft.MainAxisAlignment.END
-                ),
-                alignment=ft.alignment.bottom_right,
-                padding=ft.padding.only(right=20, bottom=20)
-            )
-        ],
-        width=page.width,
-        height=page.height
-    )
+    page.overlay.append(buttons_container)
+    page.add(ft.ListView(expand=True, controls=controls, spacing=10, padding=20, auto_scroll=True))
 
-    # Добавление контейнера с кнопками на страницу
-    page.controls.append(tabs)
-    page.controls.append(buttons_container)
-
-    # Обновление метрик каждую секунду
-    def update_metrics_periodically():
-        cpu_data = []
-        memory_data = []
-        while True:
-            try:
-                cpu_data.append(get_cpu_usage())
-                memory_data.append(float(get_memory_usage()['Процент использования 📊'].replace('%', '')))
-                if len(cpu_data) > 60:  # Ограничиваем количество точек данных
-                    cpu_data.pop(0)
-                    memory_data.pop(0)
-
-                buf = plot_metrics(cpu_data, memory_data)
-                graph_card.content.content.controls[1].src_base64 = base64.b64encode(buf.getvalue()).decode()
-                buf.close()
-
-                update_metrics()
-                time.sleep(1)
-            except Exception as e:
-                print(f"Ошибка при периодическом обновлении метрик: {e}")
-
-    threading.Thread(target=update_metrics_periodically, daemon=True).start()
+    asyncio.create_task(update_metrics())
 
 ft.app(target=main)
