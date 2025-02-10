@@ -12,10 +12,10 @@ def get_memory_usage():
     """Получает текущие статистики использования памяти."""
     memory = psutil.virtual_memory()
     return {
-        'Всего 💾': f'{memory.total / (1024 ** 3):.2f} ГБ',
-        'Используется 🔒': f'{memory.used / (1024 ** 3):.2f} ГБ',
-        'Свободно 🔓': f'{memory.available / (1024 ** 3):.2f} ГБ',
-        'Процент использования 📊': f'{memory.percent}%'
+        'Всего': f'{memory.total / (1024 ** 3):.2f} ГБ',
+        'Используется': f'{memory.used / (1024 ** 3):.2f} ГБ',
+        'Свободно': f'{memory.available / (1024 ** 3):.2f} ГБ',
+        'Процент использования': f'{memory.percent}%'
     }
 
 def get_disk_usage():
@@ -40,20 +40,20 @@ def get_disk_io():
     """Получает статистику ввода-вывода диска."""
     disk_io = psutil.disk_io_counters()
     return {
-        'Чтение (байт) 📄': disk_io.read_bytes,
-        'Запись (байт) 💾': disk_io.write_bytes,
-        'Чтение (количество) 🔍': disk_io.read_count,
-        'Запись (количество) 🖋️': disk_io.write_count
+        'Чтение (байт)': disk_io.read_bytes,
+        'Запись (байт)': disk_io.write_bytes,
+        'Чтение (количество)': disk_io.read_count,
+        'Запись (количество)': disk_io.write_count
     }
 
 def get_network_usage():
     """Получает статистику использования сети."""
     net_io = psutil.net_io_counters()
     return {
-        'Отправлено (байт) 📤': net_io.bytes_sent,
-        'Получено (байт) 📥': net_io.bytes_recv,
-        'Пакеты отправлены 📦': net_io.packets_sent,
-        'Пакеты получены 📫': net_io.packets_recv
+        'Отправлено (байт)': net_io.bytes_sent,
+        'Получено (байт)': net_io.bytes_recv,
+        'Пакеты отправлены': net_io.packets_sent,
+        'Пакеты получены': net_io.packets_recv
     }
 
 def get_gpu_usage():
@@ -67,7 +67,7 @@ def get_gpu_usage():
                 gpu.name,
                 f"{gpu.load * 100:.2f}%",
                 f"{gpu.memoryUtil * 100:.2f}%",
-                f"{gpu.temperature} °C 🌡️"
+                f"{gpu.temperature} °C"
             ])
         return gpu_list
     except Exception as e:
@@ -98,7 +98,9 @@ async def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.START
     page.padding = 20
     page.scroll = ft.ScrollMode.AUTO
+    page.theme_mode = "light"  # Устанавливаем светлую тему по умолчанию
 
+    # Текстовые элементы для отображения метрик
     cpu_text = ft.Text(style="headlineSmall", color=ft.Colors.BLUE_GREY)
     memory_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
     disk_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
@@ -107,6 +109,7 @@ async def main(page: ft.Page):
     gpu_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
     processes_text = ft.Text(style="bodyMedium", color=ft.Colors.BLUE_GREY)
 
+    # Выпадающий список для выбора темы
     theme_dropdown = ft.Dropdown(
         options=[
             ft.dropdown.Option("Светлая"),
@@ -131,12 +134,12 @@ async def main(page: ft.Page):
             gpu_usage = get_gpu_usage()
             top_processes = get_top_processes()
 
-            cpu_text.value = f"Загрузка CPU 💻: {cpu_usage}%"
+            cpu_text.value = f"Загрузка CPU: {cpu_usage}%"
             memory_text.value = "\n".join([f"{key}: {value}" for key, value in memory_usage.items()])
-            disk_text.value = tabulate(disk_usage, headers=['Устройство', 'Всего 💿', 'Используется 📂', 'Свободно 🗄️', 'Процент использования 📉'])
+            disk_text.value = tabulate(disk_usage, headers=['Устройство', 'Всего', 'Используется', 'Свободно', 'Процент использования'])
             disk_io_text.value = "\n".join([f"{key}: {value}" for key, value in disk_io.items()])
             network_text.value = "\n".join([f"{key}: {value}" for key, value in network_usage.items()])
-            gpu_text.value = tabulate(gpu_usage, headers=['ID', 'Название', 'Загрузка', 'Использование памяти', 'Температура']) if gpu_usage else "GPU не обнаружен или недоступен. 🚫"
+            gpu_text.value = tabulate(gpu_usage, headers=['ID', 'Название', 'Загрузка', 'Использование памяти', 'Температура']) if gpu_usage else "GPU не обнаружен или недоступен."
             processes_text.value = tabulate(top_processes, headers=['PID', 'Название', 'CPU %', 'Память %'])
 
             page.update()
@@ -168,41 +171,42 @@ async def main(page: ft.Page):
         bgcolor=ft.Colors.BLUE
     )
 
+    # Кнопка для сохранения логов
+    save_button = ft.FloatingActionButton(
+        icon=ft.Icons.SAVE,
+        on_click=lambda e: save_logs(get_cpu_usage(), get_memory_usage(), get_disk_usage(), get_disk_io(), get_network_usage(), get_gpu_usage(), get_top_processes()),
+        bgcolor=ft.Colors.GREEN
+    )
+
+    # Вкладки для разных метрик
+    tabs = ft.Tabs(
+        selected_index=0,
+        animation_duration=300,
+        tabs=[
+            ft.Tab(text="CPU & Memory", content=ft.Column([cpu_text, memory_text])),
+            ft.Tab(text="Disk", content=ft.Column([disk_text, disk_io_text])),
+            ft.Tab(text="Network", content=network_text),
+            ft.Tab(text="GPU", content=gpu_text),
+            ft.Tab(text="Processes", content=processes_text),
+        ],
+        expand=True,
+    )
+
     controls = [
         ft.Text("Мониторинг системы", style="headlineMedium", color=ft.Colors.DEEP_PURPLE),
-        ft.Divider(height=10, color="purple"),
-        ft.Row(
-            controls=[
-                ft.Column([cpu_text, memory_text], col=6),
-                ft.Column([disk_text, disk_io_text], col=6)
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-        ),
-        ft.Divider(height=10, color="transparent"),
-        network_text,
-        ft.Divider(height=10, color="transparent"),
-        gpu_text,
-        ft.Divider(height=10, color="transparent"),
-        processes_text,
-        ft.Divider(height=10, color="transparent"),
+        ft.Divider(height=10, color=ft.Colors.PURPLE),
+        tabs,
     ]
 
     buttons_container = ft.Container(
         content=ft.Row(
-            [theme_dropdown, refresh_button],
+            [theme_dropdown, refresh_button, save_button],
             alignment=ft.MainAxisAlignment.END
         ),
-        alignment=ft.alignment.bottom_right,
-        expand=False,
-        margin=ft.padding.all(10),
+        alignment=ft.Alignment(1, 1),  # Выравнивание по правому нижнему углу
+        margin=ft.margin.all(10),
         padding=ft.padding.all(10),
-        bgcolor=ft.Colors.with_opacity(0.8, ft.Colors.WHITE),  # Исправлено использование with_opacity
-        border_radius=10,
-        shadow=ft.BoxShadow(
-            blur_radius=10,
-            color=ft.Colors.with_opacity(0.2, ft.Colors.BLACK),  # Исправлено использование with_opacity
-            offset=ft.Offset(0, 2)
-        ),
+        border_radius=10
     )
 
     page.overlay.append(buttons_container)
