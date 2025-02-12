@@ -13,7 +13,7 @@ def start_game():
     gender = choose_gender()
     name = input("Введите имя вашего персонажа: ")
 
-    print(f"\nВы выбрали играть за {gender} по имени {name}. Нажмите Enter, чтобы начать...")
+    print(f"\nВы выбрали играть за {gender} по имени {name}. Нажмите Enter, чтобы начать ...")
     input()
 
     chapter_1(gender, name)
