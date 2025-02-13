@@ -1,4 +1,4 @@
-# Управление отношениями
+#Управление отношениями
 
 # Глобальные переменные для отношений
 relationships = {
@@ -37,3 +37,4 @@ def manage_relationships():
         if location in location_reputation:
             location_reputation[location] += points
             print(f"Ваша репутация в {location} изменилась. Текущий уровень: {location_reputation[location]}")
+            
