@@ -58,7 +58,15 @@ relationships = {
     "Лиза": 0,
     "Макс": 0,
     "Ник": 0,
-    "Анна": 0
+    "Анна": 0,
+    "Катя": 0,
+    "Вика": 0,
+    "Настя": 0,
+    "Надежда": 0,
+    "Любовь": 0,
+    "Вероника": 0,
+    "Вера": 0,
+    "Мария": 0
 }
 
 location_reputation = {
@@ -66,7 +74,10 @@ location_reputation = {
     "кафе": 0,
     "библиотека": 0,
     "спортивный зал": 0,
-    "музей": 0
+    "музей": 0,
+    "пляж": 0,
+    "ночной клуб": 0,
+    "парк аттракционов": 0
 }
 
 adult_content_enabled = False
@@ -170,7 +181,7 @@ class GameApp(ctk.CTk):
     def chapter_1(self):
         self.display_text("\nГлава 1: Новый дом")
         self.display_text(f"{self.name}, вы стоите перед своим новым домом. Куда вы пойдете первым делом?")
-        self.set_button_texts(["В парк", "В кафе", "В библиотеку", "В спортивный зал", "В музей", "На прогулку по городу"])
+        self.set_button_texts(["В парк", "В кафе", "В библиотеку", "В спортивный зал", "В музей", "На прогулку по городу", "На пляж", "В ночной клуб", "В парк аттракционов"])
         self.current_function = self.handle_chapter_1_choice
 
     def handle_chapter_1_choice(self, choice):
@@ -186,6 +197,12 @@ class GameApp(ctk.CTk):
             self.museum()
         elif choice == 5:
             self.city_walk()
+        elif choice == 6:
+            self.beach()
+        elif choice == 7:
+            self.night_club()
+        elif choice == 8:
+            self.amusement_park()
         else:
             self.display_text("Пожалуйста, введите корректный номер.")
             self.chapter_1()
@@ -210,14 +227,14 @@ class GameApp(ctk.CTk):
         if choice == 0:
             self.display_text("Вы обменялись контактами с Алексом и договорились встретиться снова.")
             skills["коммуникабельность"] += 1
-            update_relationship("Алекс", 2)
-            update_location_reputation("парк", 1)
+            self.update_relationship("Алекс", 2)
+            self.update_location_reputation("парк", 1)
             quests.append("Встретиться с Алексом в парке")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Алекс", -1)
-            update_location_reputation("парк", -1)
+            self.update_relationship("Алекс", -1)
+            self.update_location_reputation("парк", -1)
             self.chapter_1()
 
     def cafe(self):
@@ -243,22 +260,22 @@ class GameApp(ctk.CTk):
             self.current_function = self.handle_cafe_final_choice
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Лиза", -1)
-            update_location_reputation("кафе", -1)
+            self.update_relationship("Лиза", -1)
+            self.update_location_reputation("кафе", -1)
             self.chapter_1()
 
     def handle_cafe_final_choice(self, choice):
         if choice == 0:
             self.display_text("Вы обменялись контактами с Лизой и договорились встретиться снова.")
             skills["коммуникабельность"] += 1
-            update_relationship("Лиза", 2)
-            update_location_reputation("кафе", 1)
+            self.update_relationship("Лиза", 2)
+            self.update_location_reputation("кафе", 1)
             quests.append("Встретиться с Лизой в кафе")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это было не ваше место.")
-            update_relationship("Лиза", -1)
-            update_location_reputation("кафе", -1)
+            self.update_relationship("Лиза", -1)
+            self.update_location_reputation("кафе", -1)
             self.chapter_1()
 
     def library(self):
@@ -284,22 +301,22 @@ class GameApp(ctk.CTk):
             self.current_function = self.handle_library_final_choice
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Макс", -1)
-            update_location_reputation("библиотека", -1)
+            self.update_relationship("Макс", -1)
+            self.update_location_reputation("библиотека", -1)
             self.chapter_1()
 
     def handle_library_final_choice(self, choice):
         if choice == 0:
             self.display_text("Вы обменялись контактами с Максом и договорились встретиться снова.")
             skills["интеллект"] += 1
-            update_relationship("Макс", 2)
-            update_location_reputation("библиотека", 1)
+            self.update_relationship("Макс", 2)
+            self.update_location_reputation("библиотека", 1)
             quests.append("Встретиться с Максом в библиотеке")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Макс", -1)
-            update_location_reputation("библиотека", -1)
+            self.update_relationship("Макс", -1)
+            self.update_location_reputation("библиотека", -1)
             self.chapter_1()
 
     def gym(self):
@@ -325,22 +342,22 @@ class GameApp(ctk.CTk):
             self.current_function = self.handle_gym_final_choice
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Ник", -1)
-            update_location_reputation("спортивный зал", -1)
+            self.update_relationship("Ник", -1)
+            self.update_location_reputation("спортивный зал", -1)
             self.chapter_1()
 
     def handle_gym_final_choice(self, choice):
         if choice == 0:
             self.display_text("Вы обменялись контактами с Ником и договорились встретиться снова.")
             skills["физическая сила"] += 1
-            update_relationship("Ник", 2)
-            update_location_reputation("спортивный зал", 1)
+            self.update_relationship("Ник", 2)
+            self.update_location_reputation("спортивный зал", 1)
             quests.append("Встретиться с Ником в спортивном зале")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Ник", -1)
-            update_location_reputation("спортивный зал", -1)
+            self.update_relationship("Ник", -1)
+            self.update_location_reputation("спортивный зал", -1)
             self.chapter_1()
 
     def museum(self):
@@ -366,22 +383,22 @@ class GameApp(ctk.CTk):
             self.current_function = self.handle_museum_final_choice
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Анна", -1)
-            update_location_reputation("музей", -1)
+            self.update_relationship("Анна", -1)
+            self.update_location_reputation("музей", -1)
             self.chapter_1()
 
     def handle_museum_final_choice(self, choice):
         if choice == 0:
             self.display_text("Вы обменялись контактами с Анной и договорились встретиться снова.")
             skills["интеллект"] += 1
-            update_relationship("Анна", 2)
-            update_location_reputation("музей", 1)
+            self.update_relationship("Анна", 2)
+            self.update_location_reputation("музей", 1)
             quests.append("Встретиться с Анной в музее")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Анна", -1)
-            update_location_reputation("музей", -1)
+            self.update_relationship("Анна", -1)
+            self.update_location_reputation("музей", -1)
             self.chapter_1()
 
     def city_walk(self):
@@ -402,7 +419,7 @@ class GameApp(ctk.CTk):
             skills["харизма"] += 1
 
         self.display_text("Прогулка по городу была приятной и полезной.")
-        manage_events.wait(2)
+        self.manage_events.wait(2)
         self.main_menu(self.gender, self.name)
 
     def check_skills_for_chapter_2(self):
@@ -432,7 +449,7 @@ class GameApp(ctk.CTk):
         skills["харизма"] += 1
         global reputation
         reputation += 2
-        unlock_achievement("Любовь с первого взгляда")
+        self.unlock_achievement("Любовь с первого взгляда")
         self.continue_relationship()
 
     def continue_relationship(self):
@@ -485,22 +502,22 @@ class GameApp(ctk.CTk):
             self.current_function = self.handle_restaurant_date_final_choice
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Лиза", -1)
-            update_location_reputation("кафе", -1)
+            self.update_relationship("Лиза", -1)
+            self.update_location_reputation("кафе", -1)
             self.chapter_1()
 
     def handle_restaurant_date_final_choice(self, choice):
         if choice == 0:
             self.display_text("Вы обменялись контактами с Лизой и договорились встретиться снова.")
             skills["коммуникабельность"] += 1
-            update_relationship("Лиза", 2)
-            update_location_reputation("кафе", 1)
+            self.update_relationship("Лиза", 2)
+            self.update_location_reputation("кафе", 1)
             quests.append("Встретиться с Лизой в кафе")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Лиза", -1)
-            update_location_reputation("кафе", -1)
+            self.update_relationship("Лиза", -1)
+            self.update_location_reputation("кафе", -1)
             self.chapter_1()
 
     def park_date(self, gender, name):
@@ -514,7 +531,7 @@ class GameApp(ctk.CTk):
             skills["коммуникабельность"] += 1
             global reputation
             reputation += 1
-            unlock_achievement("Любовь с первого взгляда")
+            self.unlock_achievement("Любовь с первого взгляда")
             self.romantic_date(gender, name)
         else:
             self.display_text(f"Вы вежливо отказываетесь, но {name} не сдается и предлагает встретиться позже.")
@@ -531,7 +548,7 @@ class GameApp(ctk.CTk):
             skills["коммуникабельность"] += 1
             global reputation
             reputation += 1
-            unlock_achievement("Любовь с первого взгляда")
+            self.unlock_achievement("Любовь с первого взгляда")
             self.romantic_date(gender, name)
         else:
             self.display_text(f"Вы вежливо отказываетесь, но {name} не сдается и предлагает встретиться позже.")
@@ -548,7 +565,7 @@ class GameApp(ctk.CTk):
             skills["коммуникабельность"] += 1
             global reputation
             reputation += 1
-            unlock_achievement("Любовь с первого взгляда")
+            self.unlock_achievement("Любовь с первого взгляда")
             self.romantic_date(gender, name)
         else:
             self.display_text(f"Вы вежливо отказываетесь, но {name} не сдается и предлагает встретиться позже.")
@@ -565,45 +582,53 @@ class GameApp(ctk.CTk):
             skills["коммуникабельность"] += 1
             global reputation
             reputation += 1
-            unlock_achievement("Любовь с первого взгляда")
+            self.unlock_achievement("Любовь с первого взгляда")
             self.romantic_date(gender, name)
         else:
-            self.display_text(f"Вы вежливо отказываетесь, но {name} не сдается и предлагает встретиться позже.")
+            self.display_text(f"Вы вежливо отказались, но {name} не сдается и предлагает встретиться позже.")
             self.chapter_2(gender, name)
 
-    def unlock_achievement(achievement_name):
+    def unlock_achievement(self, achievement_name):
         for achievement in achievements_list:
             if achievement["name"] == achievement_name:
                 achievement["unlocked"] = True
-                print(f"Достижение разблокировано: {achievement_name}!")
+                self.display_text(f"Достижение разблокировано: {achievement_name}!")
                 if achievement["reward"]:
-                    print(f"Вы получили награду: {achievement['reward']}")
+                    self.display_text(f"Вы получили награду: {achievement['reward']}")
                     # Здесь можно добавить логику для применения награды
                 break
 
     def main_menu(self, gender, name):
         self.display_text("\nГлавное меню")
-        self.set_button_texts(["1. Продолжить игру", "2. Сохранить игру", "3. Загрузить игру", "4. Выйти из игры"])
+        self.set_button_texts(["1. Продолжить игру", "2. Сохранить игру", "3. Загрузить игру", "4. Выйти из игры", "5. Система достижений", "6. Меню отношений", "7. Инвентарь", "8. Меню крафта"])
         self.current_function = self.handle_main_menu_choice
 
     def handle_main_menu_choice(self, choice):
         if choice == 0:
             self.chapter_1()
         elif choice == 1:
-            save_game(gender, name, skills, reputation, quests, relationships, location_reputation, achievements_list)
-            print("Игра сохранена!")
+            self.save_game(gender, name, skills, reputation, quests, relationships, location_reputation, achievements_list)
+            self.display_text("Игра сохранена!")
             self.main_menu(gender, name)
         elif choice == 2:
-            gender, name, skills, reputation, quests, relationships, location_reputation, achievements_list = load_game()
-            print("Игра загружена!")
+            gender, name, skills, reputation, quests, relationships, location_reputation, achievements_list = self.load_game()
+            self.display_text("Игра загружена!")
             self.main_menu(gender, name)
         elif choice == 3:
-            print("Спасибо за игру! До новых встреч!")
+            self.display_text("Спасибо за игру! До новых встреч!")
+        elif choice == 4:
+            self.achievement_system()
+        elif choice == 5:
+            self.relationship_menu()
+        elif choice == 6:
+            self.inventory_menu()
+        elif choice == 7:
+            self.crafting_menu()
         else:
-            print("Пожалуйста, введите корректный номер.")
+            self.display_text("Пожалуйста, введите корректный номер.")
             self.main_menu(gender, name)
 
-    def save_game(gender, name, skills, reputation, quests, relationships, location_reputation, achievements_list):
+    def save_game(self, gender, name, skills, reputation, quests, relationships, location_reputation, achievements_list):
         game_data = {
             "gender": gender,
             "name": name,
@@ -617,7 +642,7 @@ class GameApp(ctk.CTk):
         with open("save_game.json", "w") as file:
             json.dump(game_data, file)
 
-    def load_game():
+    def load_game(self):
         with open("save_game.json", "r") as file:
             game_data = json.load(file)
         return (
@@ -631,38 +656,38 @@ class GameApp(ctk.CTk):
             game_data["achievements_list"]
         )
 
-    def update_relationship(name, points):
+    def update_relationship(self, name, points):
         if name in relationships:
             relationships[name] += points
-            print(f"Ваши отношения с {name} изменились. Текущий уровень: {relationships[name]}")
+            self.display_text(f"Ваши отношения с {name} изменились. Текущий уровень: {relationships[name]}")
 
             if relationships[name] >= 15:
-                print(f"Ваши отношения с {name} достигли нового уровня. Вы можете провести интимное время вместе.")
+                self.display_text(f"Ваши отношения с {name} достигли нового уровня. Вы можете провести интимное время вместе.")
 
-    def update_location_reputation(location, points):
+    def update_location_reputation(self, location, points):
         if location in location_reputation:
             location_reputation[location] += points
-            print(f"Ваша репутация в {location} изменилась. Текущий уровень: {location_reputation[location]}")
+            self.display_text(f"Ваша репутация в {location} изменилась. Текущий уровень: {location_reputation[location]}")
 
-    def manage_skills(skill, points):
+    def manage_skills(self, skill, points):
         if skill in skills:
             skills[skill] += points
-            print(f"Ваш навык '{skill}' улучшен. Текущий уровень: {skills[skill]}")
+            self.display_text(f"Ваш навык '{skill}' улучшен. Текущий уровень: {skills[skill]}")
 
-    def manage_relationships(name, points):
-        update_relationship(name, points)
+    def manage_relationships(self, name, points):
+        self.update_relationship(name, points)
 
-    def manage_quests(quest):
+    def manage_quests(self, quest):
         quests.append(quest)
-        print(f"Новый квест добавлен: {quest}")
+        self.display_text(f"Новый квест добавлен: {quest}")
 
-    def manage_achievements(achievement_name):
-        unlock_achievement(achievement_name)
+    def manage_achievements(self, achievement_name):
+        self.unlock_achievement(achievement_name)
 
-    def manage_events():
+    def manage_events(self):
         time.sleep(2)
 
-    def manage_dialogues():
+    def manage_dialogues(self):
         pass
 
     def play_music(self):
@@ -672,6 +697,193 @@ class GameApp(ctk.CTk):
     def adjust_volume(self, event):
         volume = self.volume_slider.get()
         pygame.mixer.music.set_volume(volume)
+
+    def event_system(self):
+        self.display_text("\nСистема событий")
+        self.display_text("Произошло неожиданное событие!")
+
+        # Пример случайного события
+        events = [
+            "Вы нашли потерянный кошелек. Что вы будете делать?",
+            "Вы стали свидетелем спора между двумя незнакомцами. Вмешаетесь ли вы?",
+            "Вы получили таинственное письмо. Откроете ли вы его?"
+        ]
+        event = random.choice(events)
+        self.display_text(event)
+
+        # Варианты действий для события
+        self.set_button_texts(["Да", "Нет", "Подумать"])
+        self.current_function = self.handle_event_choice
+
+    def handle_event_choice(self, choice):
+        if choice == 0:
+            self.display_text("Вы решили действовать и приняли участие в событии.")
+            # Здесь можно добавить логику для развития события
+        elif choice == 1:
+            self.display_text("Вы решили не вмешиваться и продолжили свой путь.")
+        elif choice == 2:
+            self.display_text("Вы решили подумать и не торопиться с решением.")
+
+        self.main_menu()
+
+    def achievement_system(self):
+        self.display_text("\nСистема достижений")
+        self.display_text("Ваши достижения:")
+
+        # Отображение доступных достижений
+        for achievement in achievements_list:
+            status = "Разблокировано" if achievement["unlocked"] else "Заблокировано"
+            self.display_text(f"{achievement['name']}: {status}")
+
+        self.set_button_texts(["Назад"])
+        self.current_function = self.main_menu
+
+    def relationship_menu(self):
+        self.display_text("\nМеню отношений")
+        self.display_text("Выберите персонажа, чтобы увидеть состояние отношений:")
+
+        # Отображение доступных персонажей и их уровня отношений
+        relationship_options = []
+        for name, points in relationships.items():
+            relationship_options.append(f"{name}: {points} очков")
+
+        self.set_button_texts(relationship_options + ["Назад"])
+        self.current_function = self.handle_relationship_choice
+
+    def handle_relationship_choice(self, choice):
+        if choice < len(relationships):
+            name = list(relationships.keys())[choice]
+            self.display_text(f"\nВы выбрали: {name}")
+            self.display_text(f"Текущий уровень отношений: {relationships[name]} очков")
+
+            # Возможность улучшения отношений
+            self.set_button_texts(["Улучшить отношения", "Вернуться назад"])
+            self.current_function = lambda x: self.improve_relationship(name, x)
+        else:
+            self.main_menu()
+
+    def improve_relationship(self, name, choice):
+        if choice == 0:
+            self.display_text(f"Вы решили улучшить отношения с {name}.")
+            self.update_relationship(name, 1)
+            self.check_relationship_events(name)
+        self.relationship_menu()
+
+    def check_relationship_events(self, name):
+        if relationships[name] >= 10:
+            self.display_text(f"Вы достигли нового уровня отношений с {name}! Произошло особое событие.")
+            # Здесь можно добавить логику для особого события
+
+    def inventory_menu(self):
+        self.display_text("\nИнвентарь")
+        self.display_text("Ваши предметы:")
+
+        # Отображение доступных предметов
+        item_options = []
+        for item in inventory:
+            item_options.append(item)
+
+        self.set_button_texts(item_options + ["Назад"])
+        self.current_function = self.handle_inventory_choice
+
+    def handle_inventory_choice(self, choice):
+        if choice < len(inventory):
+            item = inventory[choice]
+            self.display_text(f"\nВы выбрали предмет: {item}")
+            self.set_button_texts(["Использовать", "Вернуться назад"])
+            self.current_function = lambda x: self.use_item(item, x)
+        else:
+            self.main_menu()
+
+    def use_item(self, item, choice):
+        if choice == 0:
+            self.display_text(f"Вы использовали предмет: {item}.")
+            # Здесь можно добавить логику использования предмета
+            inventory.remove(item)
+        self.inventory_menu()
+
+    def crafting_menu(self):
+        self.display_text("\nМеню крафта")
+        self.display_text("Выберите предметы для крафта:")
+
+        # Отображение доступных предметов для крафта
+        craftable_items = ["Предмет 1 + Предмет 2 = Новый предмет", "Предмет 3 + Предмет 4 = Уникальный предмет"]
+        self.set_button_texts(craftable_items + ["Назад"])
+        self.current_function = self.handle_crafting_choice
+
+    def handle_crafting_choice(self, choice):
+        if choice < len(craftable_items):
+            craft_option = craftable_items[choice]
+            self.display_text(f"Вы выбрали: {craft_option}")
+            self.display_text("Крафт успешен! Вы создали новый предмет.")
+            # Здесь можно добавить логику для создания нового предмета
+        else:
+            self.inventory_menu()
+
+    def beach(self):
+        self.display_text("\nВы приходите на пляж и чувствуете теплый песок под ногами.")
+        self.display_text(f"{self.name}, вы находите свободное место и расстилаете полотенце.")
+        self.display_text("Вдруг к вам подходит незнакомец и предлагает сыграть в волейбол.")
+        self.set_button_texts(["Да", "Нет"])
+        self.current_function = self.handle_beach_choice
+
+    def handle_beach_choice(self, choice):
+        if choice == 0:
+            self.display_text("Вы соглашаетесь и проводите время, играя в волейбол. Это было весело!")
+            skills["физическая сила"] += 1
+            self.update_location_reputation("пляж", 1)
+        else:
+            self.display_text("Вы вежливо отказываетесь и продолжаете отдыхать на пляже.")
+            self.update_location_reputation("пляж", -1)
+        self.chapter_1()
+
+    def night_club(self):
+        self.display_text("\nВы приходите в ночной клуб и чувствуете ритм музыки.")
+        self.display_text(f"{self.name}, вы наслаждаетесь атмосферой и замечаете диджея за пультом.")
+        self.display_text("Диджей Вика машет вам рукой и приглашает к себе.")
+        self.set_button_texts(["Подойти к Вике", "Остаться на танцполе"])
+        self.current_function = self.handle_night_club_choice
+
+    def handle_night_club_choice(self, choice):
+        if choice == 0:
+            self.display_text("Вы подходите к Вике, и она предлагает вам попробовать себя в роли диджея.")
+            self.set_button_texts(["Согласиться", "Отказаться"])
+            self.current_function = self.handle_night_club_dj
+        else:
+            self.display_text("Вы остаетесь на танцполе и наслаждаетесь музыкой.")
+            skills["харизма"] += 1
+            self.update_location_reputation("ночной клуб", 1)
+        self.chapter_1()
+
+    def handle_night_club_dj(self, choice):
+        if choice == 0:
+            self.display_text("Вы соглашаетесь и пробуете себя в роли диджея. Публика в восторге!")
+            skills["харизма"] += 1
+            self.update_relationship("Вика", 2)
+            self.update_location_reputation("ночной клуб", 1)
+        else:
+            self.display_text("Вы вежливо отказываетесь и возвращаетесь на танцпол.")
+            self.update_relationship("Вика", -1)
+            self.update_location_reputation("ночной клуб", -1)
+        self.chapter_1()
+
+    def amusement_park(self):
+        self.display_text("\nВы приходите в парк аттракционов и чувствуете атмосферу веселья.")
+        self.display_text(f"{self.name}, вы замечаете Настю, которая приглашает вас на аттракцион.")
+        self.set_button_texts(["Согласиться", "Отказаться"])
+        self.current_function = self.handle_amusement_park_choice
+
+    def handle_amusement_park_choice(self, choice):
+        if choice == 0:
+            self.display_text("Вы соглашаетесь и проводите время на аттракционах с Настей. Это было захватывающе!")
+            skills["коммуникабельность"] += 1
+            self.update_relationship("Настя", 2)
+            self.update_location_reputation("парк аттракционов", 1)
+        else:
+            self.display_text("Вы вежливо отказываетесь и продолжаете гулять по парку.")
+            self.update_relationship("Настя", -1)
+            self.update_location_reputation("парк аттракционов", -1)
+        self.chapter_1()
 
 if __name__ == "__main__":
     app = GameApp()
