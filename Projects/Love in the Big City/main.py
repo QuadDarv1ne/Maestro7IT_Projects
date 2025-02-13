@@ -1,11 +1,13 @@
 import time
 import random
+import json
 
 # Глобальные переменные
-skills = {"коммуникабельность": 0, "интеллект": 0, "физическая сила": 0}
+skills = {"коммуникабельность": 0, "интеллект": 0, "физическая сила": 0, "харизма": 0, "удача": 0}
 reputation = 0
 quests = []
-required_skills_for_chapter_2 = 5  # Минимальное количество навыков для перехода к главе 2
+achievements = []
+required_skills_for_chapter_2 = 10  # Минимальное количество навыков для перехода к главе 2
 
 # Вопросы для викторины
 questions_pool = [
@@ -21,7 +23,19 @@ questions_pool = [
     {"question": "Кто написал пьесу 'Ромео и Джульетта'?", "answer": "Уильям Шекспир", "skill": "интеллект"}
 ]
 
+# Достижения
+achievements_list = [
+    {"name": "Начало пути", "description": "Начать новую игру.", "unlocked": False},
+    {"name": "Социальный человек", "description": "Достичь 10 единиц коммуникабельности.", "unlocked": False},
+    {"name": "Интеллектуал", "description": "Достичь 10 единиц интеллекта.", "unlocked": False},
+    {"name": "Силач", "description": "Достичь 10 единиц физической силы.", "unlocked": False},
+    {"name": "Обаятельный", "description": "Достичь 10 единиц харизмы.", "unlocked": False},
+    {"name": "Везунчик", "description": "Достичь 10 единиц удачи.", "unlocked": False},
+    {"name": "Любовь с первого взгляда", "description": "Успешно завершить первое свидание.", "unlocked": False}
+]
+
 def start_game():
+    global achievements
     print("Добро пожаловать в текстовую новеллу 'Love in the Big City'!")
     print("Вы - молодой человек/девушка, который/ая только что переехал/а в большой город.")
     print("Ваша цель - найти свою любовь и построить счастливую жизнь.")
@@ -32,6 +46,8 @@ def start_game():
     print(f"\nВы выбрали играть за {gender} по имени {name}. Нажмите Enter, чтобы начать...")
     input()
 
+    achievements = [ach for ach in achievements_list]  # Сброс достижений
+    unlock_achievement("Начало пути")
     main_menu(gender, name)
 
 def choose_gender():
@@ -219,6 +235,7 @@ def chapter_2(gender, name, new_friend_name, location):
         print(f"Вы соглашаетесь и проводите выходные с {new_friend_name}. Вы узнаете друг друга лучше и чувствуете, что между вами возникает что-то особенное.")
         skills["коммуникабельность"] += 1
         reputation += 1
+        unlock_achievement("Любовь с первого взгляда")
         romantic_date(gender, name, new_friend_name)
     else:
         print(f"Вы вежливо отказываетесь, но {new_friend_name} не сдается и предлагает встретиться позже.")
@@ -331,7 +348,8 @@ def random_event(gender, name):
         "Вы нашли кошелек на улице. Что вы будете делать?",
         "Вы стали свидетелем ограбления. Что вы будете делать?",
         "Вы получили приглашение на вечеринку. Пойдете ли вы?",
-        "Вы встретили старого друга на улице. Что вы будете делать?"
+        "Вы встретили старого друга на улице. Что вы будете делать?",
+        "Вы встретили привлекательного незнакомца на улице. Что вы будете делать?"
     ]
     event = random.choice(events)
     print("\nСлучайное событие:")
@@ -380,6 +398,16 @@ def random_event(gender, name):
             print("Вы проигнорировали старого друга. Возможно, это было не самое вежливое решение.")
             reputation -= 1
 
+    elif event == "Вы встретили привлекательного незнакомца на улице. Что вы будете делать?":
+        print("1. Подойти и познакомиться")
+        print("2. Проигнорировать и пройти мимо")
+        choice = input("Введите номер выбора: ")
+        if choice == "1":
+            print("Вы подошли и познакомились с незнакомцем. Возможно, это начало нового романа.")
+            skills["коммуникабельность"] += 1
+        else:
+            print("Вы проигнорировали незнакомца. Возможно, это был не самый удачный момент.")
+
     wait(2)
     main_menu(gender, name)
 
@@ -416,14 +444,61 @@ def show_quests():
         print(f"- {quest}")
     wait(2)
 
+def show_achievements():
+    print("\nВаши достижения:")
+    for achievement in achievements:
+        if achievement["unlocked"]:
+            print(f"- {achievement['name']}: {achievement['description']}")
+    wait(2)
+
+def unlock_achievement(name):
+    for achievement in achievements:
+        if achievement["name"] == name:
+            achievement["unlocked"] = True
+            print(f"\nДостижение разблокировано: {achievement['name']} - {achievement['description']}")
+            break
+
+def save_game(gender, name):
+    game_state = {
+        "name": name,
+        "gender": gender,
+        "skills": skills,
+        "reputation": reputation,
+        "quests": quests,
+        "achievements": achievements
+    }
+    with open("save_game.json", "w") as file:
+        json.dump(game_state, file)
+    print("Игра сохранена!")
+
+def load_game():
+    try:
+        with open("save_game.json", "r") as file:
+            game_state = json.load(file)
+            global name, gender, skills, reputation, quests, achievements
+            name = game_state["name"]
+            gender = game_state["gender"]
+            skills = game_state["skills"]
+            reputation = game_state["reputation"]
+            quests = game_state["quests"]
+            achievements = game_state["achievements"]
+            print("Игра загружена!")
+            main_menu(gender, name)
+    except FileNotFoundError:
+        print("Сохранение не найдено. Начните новую игру.")
+        start_game()
+
 def main_menu(gender, name):
     print("\nГлавное меню")
     print("1. Продолжить игру")
     print("2. Посмотреть навыки")
     print("3. Посмотреть квесты")
-    print("4. Мини-игра")
-    print("5. Случайное событие")
-    print("6. Выйти из игры")
+    print("4. Посмотреть достижения")
+    print("5. Мини-игра")
+    print("6. Случайное событие")
+    print("7. Сохранить игру")
+    print("8. Загрузить игру")
+    print("9. Выйти из игры")
 
     choice = input("Введите номер выбора: ")
     if choice == "1":
@@ -435,12 +510,20 @@ def main_menu(gender, name):
         show_quests()
         main_menu(gender, name)
     elif choice == "4":
-        mini_game(gender, name)
+        show_achievements()
         main_menu(gender, name)
     elif choice == "5":
-        random_event(gender, name)
+        mini_game(gender, name)
         main_menu(gender, name)
     elif choice == "6":
+        random_event(gender, name)
+        main_menu(gender, name)
+    elif choice == "7":
+        save_game(gender, name)
+        main_menu(gender, name)
+    elif choice == "8":
+        load_game()
+    elif choice == "9":
         print("Спасибо за игру! До свидания!")
     else:
         print("Пожалуйста, введите корректный номер.")
