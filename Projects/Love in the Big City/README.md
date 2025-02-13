@@ -74,10 +74,22 @@ love_in_city/
 │   │   ├── males/
 │   │   │   ├── maxim.json     # Конфиг Максима
 │   │   │   ├── alexandr.json  # Конфиг Александра
+│   │   │   ├── nikolay.json   # Конфиг Николая
+│   │   │   ├── ivan.json      # Конфиг Ивана
+│   │   │   ├── dmitry.json    # Конфиг Дмитрия
+│   │   │   ├── sergey.json    # Конфиг Сергея
 │   │   │   └── ...
 │   │   └── females/
-│   │       ├── liza.json      # Конфиг Лизы
-│   │       ├── anna.json      # Конфиг Анны
+│   │       ├── liza.json       # Конфиг Лизы
+│   │       ├── anna.json       # Конфиг Анны
+│   │       ├── katya.json      # Конфиг Кати
+│   │       ├── vika.json       # Конфиг Вики
+│   │       ├── nastya.json     # Конфиг Насти
+│   │       ├── nadezhda.json   # Конфиг Надежды
+│   │       ├── lyubov.json     # Конфиг Любви
+│   │       ├── veronika.json   # Конфиг Вероники
+│   │       ├── vera.json       # Конфиг Веры
+│   │       ├── mariya.json     # Конфиг Марии
 │   │       └── ...
 │   │
 │   ├── dialogs/                    # Диалоги

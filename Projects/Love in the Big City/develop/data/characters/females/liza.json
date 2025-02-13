@@ -1,0 +1,8 @@
+{
+    "name": "Лиза",
+    "gender": "female",
+    "orientation": "straight",
+    "description": "Официантка в кафе, добрая и отзывчивая.",
+    "base_relationship": 0,
+    "location": "кафе"
+}

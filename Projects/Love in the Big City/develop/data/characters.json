@@ -1,108 +1,132 @@
 {
-    "characters": [
+  "characters": [
       {
-        "name": "Александр",
-        "gender": "male",
-        "orientation": "straight",
-        "description": "Дружелюбный парень, любит спорт и активный отдых.",
-        "base_relationship": 0,
-        "location": "парк"
+          "name": "Александр",
+          "gender": "male",
+          "orientation": "straight",
+          "description": "Дружелюбный парень, любит спорт и активный отдых.",
+          "base_relationship": 0,
+          "location": "парк"
       },
       {
-        "name": "Лиза",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Официантка в кафе, добрая и отзывчивая.",
-        "base_relationship": 0,
-        "location": "кафе"
+          "name": "Лиза",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Официантка в кафе, добрая и отзывчивая.",
+          "base_relationship": 0,
+          "location": "кафе"
       },
       {
-        "name": "Максим",
-        "gender": "male",
-        "orientation": "straight",
-        "description": "Библиотекарь-интеллектуал, ценит тишину и книги.",
-        "base_relationship": 0,
-        "location": "библиотека"
+          "name": "Максим",
+          "gender": "male",
+          "orientation": "straight",
+          "description": "Библиотекарь-интеллектуал, ценит тишину и книги.",
+          "base_relationship": 0,
+          "location": "библиотека"
       },
       {
-        "name": "Николай",
-        "gender": "male",
-        "orientation": "straight",
-        "description": "Тренер в спортзале, уверенный в себе.",
-        "base_relationship": 0,
-        "location": "спортивный зал"
+          "name": "Николай",
+          "gender": "male",
+          "orientation": "straight",
+          "description": "Тренер в спортивном зале, уверенный в себе.",
+          "base_relationship": 0,
+          "location": "спортивный зал"
       },
       {
-        "name": "Анна",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Гид в музее, увлечена историей.",
-        "base_relationship": 0,
-        "location": "музей"
+          "name": "Анна",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Гид в музее, увлечена историей.",
+          "base_relationship": 0,
+          "location": "музей"
       },
       {
-        "name": "Катя",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Веселая девушка с пляжа, любит приключения.",
-        "base_relationship": 0,
-        "location": "пляж"
+          "name": "Катя",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Веселая девушка с пляжа, любит приключения.",
+          "base_relationship": 0,
+          "location": "пляж"
       },
       {
-        "name": "Вика",
-        "gender": "female",
-        "orientation": "lesbian",
-        "description": "Диджей в ночном клубе, свободолюбивая и яркая.",
-        "base_relationship": 0,
-        "location": "ночной клуб"
+          "name": "Вика",
+          "gender": "female",
+          "orientation": "lesbian",
+          "description": "Диджей в ночном клубе, свободолюбивая и яркая.",
+          "base_relationship": 0,
+          "location": "ночной клуб"
       },
       {
-        "name": "Настя",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Работница парка аттракционов, мечтательная и романтичная.",
-        "base_relationship": 0,
-        "location": "парк аттракционов"
+          "name": "Настя",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Работница парка аттракционов, мечтательная и романтичная.",
+          "base_relationship": 0,
+          "location": "парк аттракционов"
       },
       {
-        "name": "Надежда",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Учительница, добрая и мудрая.",
-        "base_relationship": 0,
-        "location": "парк"
+          "name": "Надежда",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Учительница, добрая и мудрая.",
+          "base_relationship": 0,
+          "location": "парк"
       },
       {
-        "name": "Любовь",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Владелица цветочного магазина, романтичная натура.",
-        "base_relationship": 0,
-        "location": "кафе"
+          "name": "Любовь",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Владелица цветочного магазина, романтичная натура.",
+          "base_relationship": 0,
+          "location": "кафе"
       },
       {
-        "name": "Вероника",
-        "gender": "female",
-        "orientation": "lesbian",
-        "description": "Художница, увлеченная своим творчеством.",
-        "base_relationship": 0,
-        "location": "музей"
+          "name": "Вероника",
+          "gender": "female",
+          "orientation": "lesbian",
+          "description": "Художница, увлеченная своим творчеством.",
+          "base_relationship": 0,
+          "location": "музей"
       },
       {
-        "name": "Вера",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Медсестра, заботливая и ответственная.",
-        "base_relationship": 0,
-        "location": "спортивный зал"
+          "name": "Вера",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Медсестра, заботливая и ответственная.",
+          "base_relationship": 0,
+          "location": "спортивный зал"
       },
       {
-        "name": "Мария",
-        "gender": "female",
-        "orientation": "straight",
-        "description": "Журналистка, всегда в поиске интересных историй.",
-        "base_relationship": 0,
-        "location": "библиотека"
+          "name": "Мария",
+          "gender": "female",
+          "orientation": "straight",
+          "description": "Журналистка, всегда в поиске интересных историй.",
+          "base_relationship": 0,
+          "location": "библиотека"
+      },
+      {
+          "name": "Иван",
+          "gender": "male",
+          "orientation": "straight",
+          "description": "Бармен в ночном клубе, общительный и дружелюбный.",
+          "base_relationship": 0,
+          "location": "ночной клуб"
+      },
+      {
+          "name": "Дмитрий",
+          "gender": "male",
+          "orientation": "straight",
+          "description": "Администратор в парке аттракционов, ответственный и внимательный.",
+          "base_relationship": 0,
+          "location": "парк аттракционов"
+      },
+      {
+          "name": "Сергей",
+          "gender": "male",
+          "orientation": "straight",
+          "description": "Владелец книжного магазина, любит литературу и философию.",
+          "base_relationship": 0,
+          "location": "библиотека"
       }
-    ]
+  ]
 }

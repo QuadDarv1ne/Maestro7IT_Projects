@@ -1,0 +1,8 @@
+{
+    "name": "Анна",
+    "gender": "female",
+    "orientation": "straight",
+    "description": "Гид в музее, увлечена историей.",
+    "base_relationship": 0,
+    "location": "музей"
+}

@@ -1,0 +1,8 @@
+{
+    "name": "Иван",
+    "gender": "male",
+    "orientation": "straight",
+    "description": "Бармен в ночном клубе, общительный и дружелюбный.",
+    "base_relationship": 0,
+    "location": "ночной клуб"
+}
