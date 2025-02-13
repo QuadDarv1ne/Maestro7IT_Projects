@@ -2,7 +2,10 @@
     "name": "Анна",
     "gender": "female",
     "orientation": "straight",
+    "romanceable": true,
+    "traits": ["умная", "заботливая", "романтичная"],
     "description": "Гид в музее, увлечена историей.",
-    "base_relationship": 0,
-    "location": "музей"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "музей"
 }

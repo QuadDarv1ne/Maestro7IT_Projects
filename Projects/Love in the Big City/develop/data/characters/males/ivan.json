@@ -2,7 +2,10 @@
     "name": "Иван",
     "gender": "male",
     "orientation": "straight",
+    "romanceable": true,
+    "traits": ["общительный", "дружелюбный", "ответственный"],
     "description": "Бармен в ночном клубе, общительный и дружелюбный.",
-    "base_relationship": 0,
-    "location": "ночной клуб"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "ночной клуб"
 }

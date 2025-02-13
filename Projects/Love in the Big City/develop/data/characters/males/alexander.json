@@ -2,7 +2,10 @@
     "name": "Александр",
     "gender": "male",
     "orientation": "straight",
+    "romanceable": true,
+    "traits": ["дружелюбный", "спортивный", "амбициозный"],
     "description": "Дружелюбный парень, любит спорт и активный отдых.",
-    "base_relationship": 0,
-    "location": "парк"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "парк"
 }

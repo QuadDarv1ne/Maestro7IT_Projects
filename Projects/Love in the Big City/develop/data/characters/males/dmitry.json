@@ -2,7 +2,10 @@
     "name": "Дмитрий",
     "gender": "male",
     "orientation": "straight",
+    "romanceable": true,
+    "traits": ["ответственный", "внимательный", "организованный"],
     "description": "Администратор в парке аттракционов, ответственный и внимательный.",
-    "base_relationship": 0,
-    "location": "парк аттракционов"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "парк аттракционов"
 }

@@ -2,7 +2,10 @@
     "name": "Надежда",
     "gender": "female",
     "orientation": "straight",
+    "romanceable": false,
+    "traits": ["мудрая", "заботливая", "добрая"],
     "description": "Учительница, добрая и мудрая.",
-    "base_relationship": 0,
-    "location": "парк"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "библиотека"
 }

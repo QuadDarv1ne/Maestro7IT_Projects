@@ -2,7 +2,10 @@
     "name": "Настя",
     "gender": "female",
     "orientation": "straight",
+    "romanceable": true,
+    "traits": ["дружелюбная", "романтичная", "мечтательная"],
     "description": "Работница парка аттракционов, мечтательная и романтичная.",
-    "base_relationship": 0,
-    "location": "парк аттракционов"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "парк аттракционов"
 }

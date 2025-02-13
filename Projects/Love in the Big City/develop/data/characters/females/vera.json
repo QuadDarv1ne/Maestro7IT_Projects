@@ -2,7 +2,10 @@
     "name": "Вера",
     "gender": "female",
     "orientation": "straight",
+    "romanceable": false,
+    "traits": ["заботливая", "добрая", "ответственная"],
     "description": "Медсестра, заботливая и ответственная.",
-    "base_relationship": 0,
-    "location": "спортивный зал"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "кафе"
 }

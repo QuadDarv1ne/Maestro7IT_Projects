@@ -1,8 +1,11 @@
 {
     "name": "Лиза",
     "gender": "female",
-    "orientation": "straight",
+    "orientation": "bi",
+    "romanceable": true,
+    "traits": ["весёлая", "творческая", "открытая"],
     "description": "Официантка в кафе, добрая и отзывчивая.",
-    "base_relationship": 0,
-    "location": "кафе"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "кафе"
 }

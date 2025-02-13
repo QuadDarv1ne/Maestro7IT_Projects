@@ -2,7 +2,10 @@
     "name": "Николай",
     "gender": "male",
     "orientation": "straight",
+    "romanceable": true,
+    "traits": ["энергичный", "дружелюбный", "творческий"],
     "description": "Тренер в спортивном зале, уверенный в себе.",
-    "base_relationship": 0,
-    "location": "спортивный зал"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "спортивный зал"
 }

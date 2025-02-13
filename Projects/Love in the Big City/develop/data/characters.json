@@ -4,129 +4,177 @@
           "name": "Александр",
           "gender": "male",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["дружелюбный", "спортивный", "амбициозный"],
           "description": "Дружелюбный парень, любит спорт и активный отдых.",
-          "base_relationship": 0,
-          "location": "парк"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "парк"
       },
       {
           "name": "Лиза",
           "gender": "female",
-          "orientation": "straight",
+          "orientation": "bi",
+          "romanceable": true,
+          "traits": ["весёлая", "творческая", "открытая"],
           "description": "Официантка в кафе, добрая и отзывчивая.",
-          "base_relationship": 0,
-          "location": "кафе"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "кафе"
       },
       {
           "name": "Максим",
           "gender": "male",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["интеллектуальный", "спокойный", "натурал"],
           "description": "Библиотекарь-интеллектуал, ценит тишину и книги.",
-          "base_relationship": 0,
-          "location": "библиотека"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "библиотека"
       },
       {
           "name": "Николай",
           "gender": "male",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["энергичный", "дружелюбный", "творческий"],
           "description": "Тренер в спортивном зале, уверенный в себе.",
-          "base_relationship": 0,
-          "location": "спортивный зал"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "спортивный зал"
       },
       {
           "name": "Анна",
           "gender": "female",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["умная", "заботливая", "романтичная"],
           "description": "Гид в музее, увлечена историей.",
-          "base_relationship": 0,
-          "location": "музей"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "музей"
       },
       {
           "name": "Катя",
           "gender": "female",
-          "orientation": "straight",
+          "orientation": "lesbian",
+          "romanceable": true,
+          "traits": ["весёлая", "авантюрная", "открытая"],
           "description": "Веселая девушка с пляжа, любит приключения.",
-          "base_relationship": 0,
-          "location": "пляж"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "пляж"
       },
       {
           "name": "Вика",
           "gender": "female",
-          "orientation": "lesbian",
+          "orientation": "bi",
+          "romanceable": true,
+          "traits": ["креативная", "энергичная", "независимая"],
           "description": "Диджей в ночном клубе, свободолюбивая и яркая.",
-          "base_relationship": 0,
-          "location": "ночной клуб"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "ночной клуб"
       },
       {
           "name": "Настя",
           "gender": "female",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["дружелюбная", "романтичная", "мечтательная"],
           "description": "Работница парка аттракционов, мечтательная и романтичная.",
-          "base_relationship": 0,
-          "location": "парк аттракционов"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "парк аттракционов"
       },
       {
           "name": "Надежда",
           "gender": "female",
           "orientation": "straight",
+          "romanceable": false,
+          "traits": ["мудрая", "заботливая", "добрая"],
           "description": "Учительница, добрая и мудрая.",
-          "base_relationship": 0,
-          "location": "парк"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "библиотека"
       },
       {
           "name": "Любовь",
           "gender": "female",
           "orientation": "straight",
+          "romanceable": false,
+          "traits": ["романтичная", "мечтательная", "добрая"],
           "description": "Владелица цветочного магазина, романтичная натура.",
-          "base_relationship": 0,
-          "location": "кафе"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "парк"
       },
       {
           "name": "Вероника",
           "gender": "female",
           "orientation": "lesbian",
+          "romanceable": true,
+          "traits": ["творческая", "загадочная", "интеллектуальная"],
           "description": "Художница, увлеченная своим творчеством.",
-          "base_relationship": 0,
-          "location": "музей"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "музей"
       },
       {
           "name": "Вера",
           "gender": "female",
           "orientation": "straight",
+          "romanceable": false,
+          "traits": ["заботливая", "добрая", "ответственная"],
           "description": "Медсестра, заботливая и ответственная.",
-          "base_relationship": 0,
-          "location": "спортивный зал"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "кафе"
       },
       {
           "name": "Мария",
           "gender": "female",
           "orientation": "straight",
+          "romanceable": false,
+          "traits": ["умная", "амбициозная", "дружелюбная"],
           "description": "Журналистка, всегда в поиске интересных историй.",
-          "base_relationship": 0,
-          "location": "библиотека"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "библиотека"
       },
       {
           "name": "Иван",
           "gender": "male",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["общительный", "дружелюбный", "ответственный"],
           "description": "Бармен в ночном клубе, общительный и дружелюбный.",
-          "base_relationship": 0,
-          "location": "ночной клуб"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "ночной клуб"
       },
       {
           "name": "Дмитрий",
           "gender": "male",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["ответственный", "внимательный", "организованный"],
           "description": "Администратор в парке аттракционов, ответственный и внимательный.",
-          "base_relationship": 0,
-          "location": "парк аттракционов"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "парк аттракционов"
       },
       {
           "name": "Сергей",
           "gender": "male",
           "orientation": "straight",
+          "romanceable": true,
+          "traits": ["интеллектуальный", "философский", "спокойный"],
           "description": "Владелец книжного магазина, любит литературу и философию.",
-          "base_relationship": 0,
-          "location": "библиотека"
+          "initial_relationship": 0,
+          "max_relationship": 100,
+          "favorite_location": "библиотека"
       }
   ]
 }

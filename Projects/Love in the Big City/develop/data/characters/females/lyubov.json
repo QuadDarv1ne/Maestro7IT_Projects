@@ -2,7 +2,10 @@
     "name": "Любовь",
     "gender": "female",
     "orientation": "straight",
+    "romanceable": false,
+    "traits": ["романтичная", "мечтательная", "добрая"],
     "description": "Владелица цветочного магазина, романтичная натура.",
-    "base_relationship": 0,
-    "location": "кафе"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "парк"
 }

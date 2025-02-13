@@ -2,7 +2,10 @@
     "name": "Максим",
     "gender": "male",
     "orientation": "straight",
+    "romanceable": true,
+    "traits": ["интеллектуальный", "спокойный", "натурал"],
     "description": "Библиотекарь-интеллектуал, ценит тишину и книги.",
-    "base_relationship": 0,
-    "location": "библиотека"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "библиотека"
 }

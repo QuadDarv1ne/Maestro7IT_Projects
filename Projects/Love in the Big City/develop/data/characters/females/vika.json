@@ -1,8 +1,11 @@
 {
     "name": "Вика",
     "gender": "female",
-    "orientation": "lesbian",
+    "orientation": "bi",
+    "romanceable": true,
+    "traits": ["креативная", "энергичная", "независимая"],
     "description": "Диджей в ночном клубе, свободолюбивая и яркая.",
-    "base_relationship": 0,
-    "location": "ночной клуб"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "ночной клуб"
 }

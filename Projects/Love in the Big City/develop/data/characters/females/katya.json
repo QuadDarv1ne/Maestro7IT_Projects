@@ -1,8 +1,11 @@
 {
     "name": "Катя",
     "gender": "female",
-    "orientation": "straight",
+    "orientation": "lesbian",
+    "romanceable": true,
+    "traits": ["весёлая", "авантюрная", "открытая"],
     "description": "Веселая девушка с пляжа, любит приключения.",
-    "base_relationship": 0,
-    "location": "пляж"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "пляж"
 }

@@ -2,7 +2,10 @@
     "name": "Мария",
     "gender": "female",
     "orientation": "straight",
+    "romanceable": false,
+    "traits": ["умная", "амбициозная", "дружелюбная"],
     "description": "Журналистка, всегда в поиске интересных историй.",
-    "base_relationship": 0,
-    "location": "библиотека"
+    "initial_relationship": 0,
+    "max_relationship": 100,
+    "favorite_location": "библиотека"
 }
