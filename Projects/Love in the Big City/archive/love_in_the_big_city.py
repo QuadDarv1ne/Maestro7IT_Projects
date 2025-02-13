@@ -1,13 +1,6 @@
 import time
 import random
 import json
-from quests import manage_quests
-from dialogues import manage_dialogues
-from events import manage_events
-from skills import manage_skills
-from relationships import manage_relationships
-from achievements import manage_achievements
-from save_load import save_game, load_game
 
 # Глобальные переменные
 skills = {
@@ -185,15 +178,15 @@ def park(gender, name):
     choice = input("Введите 'да' или 'нет': ").lower()
     if choice == "да":
         print(f"Вы обменялись контактами с Алексом и договорились встретиться снова.")
-        manage_skills.upgrade_skill("коммуникабельность")
-        manage_relationships.update_relationship("Алекс", 2)
-        manage_relationships.update_location_reputation("парк", 1)
+        skills["коммуникабельность"] += 1
+        update_relationship("Алекс", 2)
+        update_location_reputation("парк", 1)
         quests.append("Встретиться с Алексом в парке")
-        manage_skills.check_skills_for_chapter_2(gender, name, new_friend_name, "парк")
+        check_skills_for_chapter_2(gender, name, new_friend_name, "парк")
     else:
         print("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-        manage_relationships.update_relationship("Алекс", -1)
-        manage_relationships.update_location_reputation("парк", -1)
+        update_relationship("Алекс", -1)
+        update_location_reputation("парк", -1)
         chapter_1(gender, name)
 
 def cafe(gender, name):
@@ -213,15 +206,15 @@ def cafe(gender, name):
         choice = input("Введите 'да' или 'нет': ").lower()
         if choice == "да":
             print(f"Вы обменялись контактами с Лизой и договорились встретиться снова.")
-            manage_skills.upgrade_skill("коммуникабельность")
-            manage_relationships.update_relationship("Лиза", 2)
-            manage_relationships.update_location_reputation("кафе", 1)
+            skills["коммуникабельность"] += 1
+            update_relationship("Лиза", 2)
+            update_location_reputation("кафе", 1)
             quests.append("Встретиться с Лизой в кафе")
-            manage_skills.check_skills_for_chapter_2(gender, name, new_friend_name, "кафе")
+            check_skills_for_chapter_2(gender, name, new_friend_name, "кафе")
         else:
             print("Вы вежливо отказались и ушли. Возможно, это было не ваше место.")
-            manage_relationships.update_relationship("Лиза", -1)
-            manage_relationships.update_location_reputation("кафе", -1)
+            update_relationship("Лиза", -1)
+            update_location_reputation("кафе", -1)
             chapter_1(gender, name)
     else:
         print("Вы просто выпиваете кофе и уходите. Возможно, это было не ваше место.")
@@ -244,15 +237,15 @@ def library(gender, name):
         choice = input("Введите 'да' или 'нет': ").lower()
         if choice == "да":
             print(f"Вы обменялись контактами с Максом и договорились встретиться снова.")
-            manage_skills.upgrade_skill("интеллект")
-            manage_relationships.update_relationship("Макс", 2)
-            manage_relationships.update_location_reputation("библиотека", 1)
+            skills["интеллект"] += 1
+            update_relationship("Макс", 2)
+            update_location_reputation("библиотека", 1)
             quests.append("Встретиться с Максом в библиотеке")
-            manage_skills.check_skills_for_chapter_2(gender, name, new_friend_name, "библиотека")
+            check_skills_for_chapter_2(gender, name, new_friend_name, "библиотека")
         else:
             print("Вы вежливо отказались и ушли. Возможно, это был не ваш день.")
-            manage_relationships.update_relationship("Макс", -1)
-            manage_relationships.update_location_reputation("библиотека", -1)
+            update_relationship("Макс", -1)
+            update_location_reputation("библиотека", -1)
             chapter_1(gender, name)
     else:
         print("Вы отказываетесь от помощи и продолжаете поиск самостоятельно. Возможно, это был не ваш день.")
@@ -275,15 +268,15 @@ def gym(gender, name):
         choice = input("Введите 'да' или 'нет': ").lower()
         if choice == "да":
             print(f"Вы обменялись контактами с Ником и договорились встретиться снова.")
-            manage_skills.upgrade_skill("физическая сила")
-            manage_relationships.update_relationship("Ник", 2)
-            manage_relationships.update_location_reputation("спортивный зал", 1)
+            skills["физическая сила"] += 1
+            update_relationship("Ник", 2)
+            update_location_reputation("спортивный зал", 1)
             quests.append("Встретиться с Ником в спортивном зале")
-            manage_skills.check_skills_for_chapter_2(gender, name, new_friend_name, "спортивный зал")
+            check_skills_for_chapter_2(gender, name, new_friend_name, "спортивный зал")
         else:
             print("Вы вежливо отказались и ушли. Возможно, это был не ваш день.")
-            manage_relationships.update_relationship("Ник", -1)
-            manage_relationships.update_location_reputation("спортивный зал", -1)
+            update_relationship("Ник", -1)
+            update_location_reputation("спортивный зал", -1)
             chapter_1(gender, name)
     else:
         print("Вы отказываетесь от помощи и продолжаете тренировку самостоятельно. Возможно, это был не ваш день.")
@@ -306,15 +299,15 @@ def museum(gender, name):
         choice = input("Введите 'да' или 'нет': ").lower()
         if choice == "да":
             print(f"Вы обменялись контактами с Анной и договорились встретиться снова.")
-            manage_skills.upgrade_skill("интеллект")
-            manage_relationships.update_relationship("Анна", 2)
-            manage_relationships.update_location_reputation("музей", 1)
+            skills["интеллект"] += 1
+            update_relationship("Анна", 2)
+            update_location_reputation("музей", 1)
             quests.append("Встретиться с Анной в музее")
-            manage_skills.check_skills_for_chapter_2(gender, name, new_friend_name, "музей")
+            check_skills_for_chapter_2(gender, name, new_friend_name, "музей")
         else:
             print("Вы вежливо отказались и ушли. Возможно, это был не ваш день.")
-            manage_relationships.update_relationship("Анна", -1)
-            manage_relationships.update_location_reputation("музей", -1)
+            update_relationship("Анна", -1)
+            update_location_reputation("музей", -1)
             chapter_1(gender, name)
     else:
         print("Вы отказываетесь от экскурсии и продолжаете осмотр самостоятельно. Возможно, это был не ваш день.")
@@ -331,21 +324,21 @@ def city_walk(gender, name):
     choice = input("Введите номер выбора: ")
     if choice == "1":
         print("Вы подошли и увидели старинную вывеску. Это вызвало у вас интерес.")
-        manage_skills.upgrade_skill("интеллект")
+        skills["интеллект"] += 1
     elif choice == "2":
         print("Вы продолжили прогулку, наслаждаясь видами города.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
     elif choice == "3":
         print("Вы сделали фотографию. Это будет отличный сувенир!")
-        manage_skills.upgrade_skill("харизма")
+        skills["харизма"] += 1
 
     print("Прогулка по городу была приятной и полезной.")
-    manage_events.wait(2)
+    wait(2)
     main_menu(gender, name)
 
 def check_skills_for_chapter_2(gender, name, new_friend_name, location):
     if sum(skills.values()) >= required_skills_for_chapter_2:
-        manage_skills.chapter_2(gender, name, new_friend_name, location)
+        chapter_2(gender, name, new_friend_name, location)
     else:
         print(f"Вам нужно набрать еще {required_skills_for_chapter_2 - sum(skills.values())} навыков, чтобы перейти к следующей главе.")
         main_menu(gender, name)
@@ -360,10 +353,10 @@ def chapter_2(gender, name, new_friend_name, location):
     choice = input("Введите 'да' или 'нет': ").lower()
     if choice == "да":
         print(f"Вы соглашаетесь и проводите выходные с {new_friend_name}. Вы узнаете друг друга лучше и чувствуете, что между вами возникает что-то особенное.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
         reputation += 1
-        manage_achievements.unlock_achievement("Любовь с первого взгляда")
-        manage_dialogues.romantic_date(gender, name, new_friend_name)
+        unlock_achievement("Любовь с первого взгляда")
+        romantic_date(gender, name, new_friend_name)
     else:
         print(f"Вы вежливо отказываетесь, но {new_friend_name} не сдается и предлагает встретиться позже.")
         chapter_2(gender, name, new_friend_name, location)
@@ -379,15 +372,15 @@ def romantic_date(gender, name, new_friend_name):
 
     choice = input("Введите номер выбора: ")
     if choice == "1":
-        manage_dialogues.restaurant_date(gender, name, new_friend_name)
+        restaurant_date(gender, name, new_friend_name)
     elif choice == "2":
-        manage_dialogues.park_date(gender, name, new_friend_name)
+        park_date(gender, name, new_friend_name)
     elif choice == "3":
-        manage_dialogues.movie_date(gender, name, new_friend_name)
+        movie_date(gender, name, new_friend_name)
     elif choice == "4":
-        manage_dialogues.concert_date(gender, name, new_friend_name)
+        concert_date(gender, name, new_friend_name)
     elif choice == "5":
-        manage_dialogues.private_date(gender, name, new_friend_name)
+        private_date(gender, name, new_friend_name)
     else:
         print("Пожалуйста, введите корректный номер.")
         romantic_date(gender, name, new_friend_name)
@@ -409,7 +402,7 @@ def restaurant_date(gender, name, new_friend_name):
         print(f"Вы поблагодарили официанта и насладились десертом. {new_friend_name} был(а) рад(а) вашему выбору.")
     elif choice == "2":
         print(f"Вы предложили разделить десерт с {new_friend_name}. Это был романтический жест, который укрепил ваши отношения.")
-        manage_relationships.update_relationship(new_friend_name, 2)
+        update_relationship(new_friend_name, 2)
     elif choice == "3":
         print(f"Вы попросили упаковать десерт с собой. {new_friend_name} был(а) удивлен(а), но согласен(а).")
 
@@ -418,15 +411,15 @@ def restaurant_date(gender, name, new_friend_name):
     choice = input("Введите 'да' или 'нет': ").lower()
     if choice == "да":
         print(f"Вы: Я тоже, {new_friend_name}. Давай продолжим наше свидание.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
         reputation += 1
-        manage_skills.chapter_3(gender, name, new_friend_name)
+        chapter_3(gender, name, new_friend_name)
     else:
         print(f"Вы: Спасибо за вечер, {new_friend_name}. Но, возможно, это был не самый удачный момент.")
-        manage_skills.chapter_2(gender, name, new_friend_name, "ресторан")
+        chapter_2(gender, name, new_friend_name, "ресторан")
 
 def park_date(gender, name, new_friend_name):
-    print("\nВы гуляете по парку, наслаждаясь природой и обществом друг друга.")
+    print("\nВы гуляете по парку, наслаждаясь природой и компанией друг друга.")
     print(f"{name} и {new_friend_name} садятся на скамейку у озера и разговаривают о жизни и мечтах.")
     print("Вы чувствуете, что между вами возникает романтическое напряжение.")
     print(f"{new_friend_name}: {name}, я провел(а) отличное время с тобой. Спасибо за этот вечер.")
@@ -434,12 +427,12 @@ def park_date(gender, name, new_friend_name):
     choice = input("Введите 'да' или 'нет': ").lower()
     if choice == "да":
         print(f"Вы: Я тоже, {new_friend_name}. Давай продолжим наше свидание.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
         reputation += 1
-        manage_skills.chapter_3(gender, name, new_friend_name)
+        chapter_3(gender, name, new_friend_name)
     else:
         print(f"Вы: Спасибо за вечер, {new_friend_name}. Но, возможно, это был не самый удачный момент.")
-        manage_skills.chapter_2(gender, name, new_friend_name, "парк")
+        chapter_2(gender, name, new_friend_name, "парк")
 
 def movie_date(gender, name, new_friend_name):
     print("\nВы идете в кино и смотрите фильм вместе.")
@@ -450,12 +443,12 @@ def movie_date(gender, name, new_friend_name):
     choice = input("Введите 'да' или 'нет': ").lower()
     if choice == "да":
         print(f"Вы: Я тоже, {new_friend_name}. Давай продолжим наше свидание.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
         reputation += 1
-        manage_skills.chapter_3(gender, name, new_friend_name)
+        chapter_3(gender, name, new_friend_name)
     else:
         print(f"Вы: Спасибо за вечер, {new_friend_name}. Но, возможно, это был не самый удачный момент.")
-        manage_skills.chapter_2(gender, name, new_friend_name, "кино")
+        chapter_2(gender, name, new_friend_name, "кино")
 
 def concert_date(gender, name, new_friend_name):
     print("\nВы идете на концерт и наслаждаетесь музыкой вместе.")
@@ -466,12 +459,12 @@ def concert_date(gender, name, new_friend_name):
     choice = input("Введите 'да' или 'нет': ").lower()
     if choice == "да":
         print(f"Вы: Я тоже, {new_friend_name}. Давай продолжим наше свидание.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
         reputation += 1
-        manage_skills.chapter_3(gender, name, new_friend_name)
+        chapter_3(gender, name, new_friend_name)
     else:
         print(f"Вы: Спасибо за вечер, {new_friend_name}. Но, возможно, это был не самый удачный момент.")
-        manage_skills.chapter_2(gender, name, new_friend_name, "концерт")
+        chapter_2(gender, name, new_friend_name, "концерт")
 
 def private_date(gender, name, new_friend_name):
     print("\nВы приходите в уединенное место, где можно насладиться обществом друг друга.")
@@ -489,10 +482,10 @@ def private_date(gender, name, new_friend_name):
             print(f"Вы просто наслаждаетесь обществом {new_friend_name}. Это был приятный вечер.")
         elif choice == "2":
             print(f"Вы решили попробовать что-то более интимное с {new_friend_name}. Это был особенный момент.")
-            manage_relationships.update_relationship(new_friend_name, 3)  # Улучшение отношений
+            update_relationship(new_friend_name, 3)  # Улучшение отношений
         elif choice == "3":
             print(f"Вы обсудили свои чувства и желания с {new_friend_name}. Это укрепило ваши отношения.")
-            manage_relationships.update_relationship(new_friend_name, 2)
+            update_relationship(new_friend_name, 2)
     else:
         print(f"Вы просто наслаждаетесь обществом {new_friend_name}. Это был приятный вечер.")
 
@@ -501,12 +494,12 @@ def private_date(gender, name, new_friend_name):
     choice = input("Введите 'да' или 'нет': ").lower()
     if choice == "да":
         print(f"Вы: Я тоже, {new_friend_name}. Давай продолжим наше свидание.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
         reputation += 1
-        manage_skills.chapter_3(gender, name, new_friend_name)
+        chapter_3(gender, name, new_friend_name)
     else:
         print(f"Вы: Спасибо за вечер, {new_friend_name}. Но, возможно, это был не самый удачный момент.")
-        manage_skills.chapter_2(gender, name, new_friend_name, "уединенное место")
+        chapter_2(gender, name, new_friend_name, "уединенное место")
 
 def chapter_3(gender, name, new_friend_name):
     print("\nГлава 3: Вместе навсегда")
@@ -514,7 +507,7 @@ def chapter_3(gender, name, new_friend_name):
     print(f"Вы решаете сделать следующий шаг в ваших отношениях.")
     print(f"{name}, вы делаете предложение и {new_friend_name} соглашается.")
     print("Вы начинаете планировать свадьбу и счастливую жизнь вместе.")
-    manage_achievements.the_end(gender, name, new_friend_name)
+    the_end(gender, name, new_friend_name)
 
 def the_end(gender, name, new_friend_name):
     print("\nКонец")
@@ -561,7 +554,7 @@ def random_event(gender, name):
         if choice == "1":
             print("Вы нашли владельца кошелька и вернули его. Владелец благодарит вас и предлагает дружбу.")
             reputation += 1
-            manage_achievements.unlock_achievement("Скрытый герой")
+            unlock_achievement("Скрытый герой")
         elif choice == "2":
             print("Вы оставили кошелек себе. Возможно, это было не самое честное решение.")
             reputation -= 1
@@ -575,15 +568,15 @@ def random_event(gender, name):
         choice = input("Введите номер выбора: ")
         if choice == "1":
             print("Вы решили исследовать карту самостоятельно. Это может привести к приключениям!")
-            manage_achievements.unlock_achievement("Искатель приключений")
+            unlock_achievement("Искатель приключений")
         elif choice == "2":
             print("Вы поделились картой с другом. Вместе вы можете найти сокровище!")
-            manage_relationships.update_relationship("Алекс", 2)  # Пример улучшения отношений
+            update_relationship("Алекс", 2)  # Пример улучшения отношений
         elif choice == "3":
             print("Вы продали карту коллекционеру. Это принесло вам прибыль, но вы упустили шанс на приключение.")
             reputation += 1
 
-    manage_events.wait(2)
+    wait(2)
     main_menu(gender, name)
 
 def mini_game_puzzle(gender, name):
@@ -600,7 +593,7 @@ def mini_game_puzzle(gender, name):
         guess = input("Введите ваш ответ: ")
         if guess.lower() == puzzle_word:
             print("Правильно! Вы решили головоломку.")
-            manage_skills.upgrade_skill("интеллект")
+            skills["интеллект"] += 1
             break
         else:
             attempts -= 1
@@ -609,7 +602,7 @@ def mini_game_puzzle(gender, name):
     if attempts == 0:
         print(f"К сожалению, вы не смогли решить головоломку. Правильный ответ: {puzzle_word}")
 
-    manage_events.wait(2)
+    wait(2)
     main_menu(gender, name)
 
 def show_skills():
@@ -617,7 +610,7 @@ def show_skills():
     for skill, data in skill_tree.items():
         specialization = data["specialization"] if data["specialization"] else "Нет"
         print(f"{skill}: Уровень {data['level']}, Специализация: {specialization}")
-    manage_events.wait(2)
+    wait(2)
 
 def upgrade_skill(skill):
     if skill in skill_tree:
@@ -627,7 +620,7 @@ def upgrade_skill(skill):
         # Проверка на доступность специализации
         if skill_tree[skill]["level"] >= 5 and skill_tree[skill]["specialization"] is None:
             print(f"Вы разблокировали специализацию для навыка '{skill}'!")
-            manage_dialogues.choose_specialization(skill)
+            choose_specialization(skill)
 
 def choose_specialization(skill):
     print(f"Выберите специализацию для навыка '{skill}':")
@@ -662,7 +655,7 @@ def show_quests():
     if choice.isdigit() and 0 < int(choice) <= len(side_quests):
         selected_quest = side_quests[int(choice) - 1]
         print(f"Вы выбрали квест: {selected_quest}")
-        manage_dialogues.complete_side_quest(selected_quest)
+        complete_side_quest(selected_quest)
     else:
         main_menu(gender, name)
 
@@ -671,16 +664,16 @@ def complete_side_quest(quest):
 
     if quest == "Помочь старушке донести сумки":
         print("Вы помогли старушке и получили в награду домашнее печенье.")
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
     elif quest == "Найти потерявшегося котенка":
         print("Вы нашли котенка и вернули его хозяину. Котенок был очень рад!")
-        manage_skills.upgrade_skill("интеллект")
+        skills["интеллект"] += 1
     elif quest == "Починить сломанный фонтан в парке":
         print("Вы починили фонтан и жители парка благодарят вас за это.")
-        manage_skills.upgrade_skill("физическая сила")
+        skills["физическая сила"] += 1
 
     print("Квест выполнен!")
-    manage_events.wait(2)
+    wait(2)
     main_menu(gender, name)
 
 def show_achievements():
@@ -688,7 +681,7 @@ def show_achievements():
     for achievement in achievements_list:
         status = "Достигнуто" if achievement["unlocked"] else "Не достигнуто"
         print(f"- {achievement['name']}: {achievement['description']} ({status})")
-    manage_events.wait(2)
+    wait(2)
 
 def unlock_achievement(name):
     for achievement in achievements_list:
@@ -696,20 +689,20 @@ def unlock_achievement(name):
             if not achievement["unlocked"]:
                 achievement["unlocked"] = True
                 print(f"\nДостижение разблокировано: {achievement['name']} - {achievement['description']}")
-                manage_achievements.apply_reward(achievement["reward"])
+                apply_reward(achievement["reward"])
             break
 
 def apply_reward(reward):
     if reward == "Бонус к коммуникабельности":
-        manage_skills.upgrade_skill("коммуникабельность")
+        skills["коммуникабельность"] += 1
     elif reward == "Бонус к харизме":
-        manage_skills.upgrade_skill("харизма")
+        skills["харизма"] += 1
     elif reward == "Бонус к интеллекту":
-        manage_skills.upgrade_skill("интеллект")
+        skills["интеллект"] += 1
     elif reward == "Бонус к физической силе":
-        manage_skills.upgrade_skill("физическая сила")
+        skills["физическая сила"] += 1
     elif reward == "Бонус к удаче":
-        manage_skills.upgrade_skill("удача")
+        skills["удача"] += 1
     elif reward == "Бонус к репутации":
         global reputation
         reputation += 1
@@ -722,7 +715,7 @@ def update_relationship(name, points):
         # Уникальные бонусы за высокий уровень отношений
         if relationships[name] >= 10:
             print(f"Вы достигли высокого уровня отношений с {name} и получили уникальный бонус!")
-            manage_skills.upgrade_skill("харизма")
+            skills["харизма"] += 1
 
 def update_location_reputation(location, points):
     if location in location_reputation:
@@ -775,7 +768,7 @@ def settings_menu():
 
     choice = input("Введите номер выбора: ")
     if choice == "1":
-        manage_dialogues.toggle_adult_content()
+        toggle_adult_content()
     elif choice == "2":
         main_menu(gender, name)
     else:
@@ -799,8 +792,8 @@ def main_menu(gender, name):
     print("7. Сохранить игру")
     print("8. Загрузить игру")
     print("9. Настройки")
-    print("10. Выбрать слот для сохранения/загрузки")
-    print("11. Выйти из игры")
+    print("10. Выйти из игры")
+    print("11. Выбрать слот для сохранения/загрузки")
 
     choice = input("Введите номер выбора: ")
     if choice == "1":
@@ -833,10 +826,11 @@ def main_menu(gender, name):
             load_game(slot)
         else:
             print("Некорректный номер слота.")
-        main_menu(gender, name)
     elif choice == "9":
         settings_menu()
     elif choice == "10":
+        print("Спасибо за игру! До свидания!")
+    elif choice == "11":
         slot_choice = input("Выберите действие: 1 - Сохранить, 2 - Загрузить, 3 - Автосохранение: ")
         if slot_choice == "1":
             slot = int(input("Введите номер слота для сохранения (1-3): "))
@@ -855,8 +849,6 @@ def main_menu(gender, name):
         else:
             print("Некорректный выбор.")
         main_menu(gender, name)
-    elif choice == "11":
-        print("Спасибо за игру! До свидания!")
     else:
         print("Пожалуйста, введите корректный номер.")
         main_menu(gender, name)
