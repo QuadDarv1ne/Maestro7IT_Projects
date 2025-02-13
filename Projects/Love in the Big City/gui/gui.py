@@ -1,83 +1,10 @@
 import customtkinter as ctk
-import json
-import random
-import time
-
-# Глобальные переменные
-skills = {
-    "коммуникабельность": 0,
-    "интеллект": 0,
-    "физическая сила": 0,
-    "харизма": 0,
-    "удача": 0
-}
-
-reputation = 0
-quests = []
-achievements_list = []
-required_skills_for_chapter_2 = 10
-
-skill_tree = {
-    "коммуникабельность": {"level": 0, "specialization": None},
-    "интеллект": {"level": 0, "specialization": None},
-    "физическая сила": {"level": 0, "specialization": None},
-    "харизма": {"level": 0, "specialization": None},
-    "удача": {"level": 0, "specialization": None}
-}
-
-specializations = {
-    "коммуникабельность": ["оратор", "переговорщик"],
-    "интеллект": ["аналитик", "исследователь"],
-    "физическая сила": ["боец", "спортсмен"],
-    "харизма": ["лидер", "общительный"],
-    "удача": ["игрок", "авантюрист"]
-}
-
-questions_pool = [
-    {"question": "Какая столица Франции?", "answer": "Париж", "skill": "интеллект"},
-    {"question": "Как называется самая большая планета в Солнечной системе?", "answer": "Юпитер", "skill": "интеллект"},
-    {"question": "Какой химический элемент обозначается символом 'O'?", "answer": "Кислород", "skill": "интеллект"},
-    {"question": "Как называется самая высокая гора в мире?", "answer": "Эверест", "skill": "физическая сила"},
-    {"question": "Какой язык программирования чаще всего используется для веб-разработки?", "answer": "JavaScript", "skill": "интеллект"},
-    {"question": "Кто написал роман 'Война и мир'?", "answer": "Лев Толстой", "skill": "интеллект"},
-    {"question": "Какая планета известна как 'красная планета'?", "answer": "Марс", "skill": "интеллект"},
-    {"question": "Какой элемент имеет атомный номер 1?", "answer": "Водород", "skill": "интеллект"},
-    {"question": "Как называется самая длинная река в мире?", "answer": "Нил", "skill": "интеллект"},
-    {"question": "Кто написал пьесу 'Ромео и Джульетта'?", "answer": "Уильям Шекспир", "skill": "интеллект"}
-]
-
-achievements_list = [
-    {"name": "Начало пути", "description": "Начать новую игру.", "unlocked": False, "reward": "Бонус к коммуникабельности"},
-    {"name": "Социальный человек", "description": "Достичь 10 единиц коммуникабельности.", "unlocked": False, "reward": "Бонус к харизме"},
-    {"name": "Интеллектуал", "description": "Достичь 10 единиц интеллекта.", "unlocked": False, "reward": "Бонус к интеллекту"},
-    {"name": "Силач", "description": "Достичь 10 единиц физической силы.", "unlocked": False, "reward": "Бонус к физической силе"},
-    {"name": "Обаятельный", "description": "Достичь 10 единиц харизмы.", "unlocked": False, "reward": "Бонус к харизме"},
-    {"name": "Везунчик", "description": "Достичь 10 единиц удачи.", "unlocked": False, "reward": "Бонус к удаче"},
-    {"name": "Любовь с первого взгляда", "description": "Успешно завершить первое свидание.", "unlocked": False, "reward": "Бонус к коммуникабельности"},
-    {"name": "Скрытый герой", "description": "Вернуть потерянный кошелек владельцу.", "unlocked": False, "reward": "Бонус к репутации"},
-    {"name": "Детектив", "description": "Раскрыть преступление и помочь полиции.", "unlocked": False, "reward": "Бонус к интеллекту"}
-]
-
-relationships = {
-    "Алекс": 0,
-    "Лиза": 0,
-    "Макс": 0,
-    "Ник": 0,
-    "Анна": 0
-}
-
-location_reputation = {
-    "парк": 0,
-    "кафе": 0,
-    "библиотека": 0,
-    "спортивный зал": 0,
-    "музей": 0
-}
-
-adult_content_enabled = False
-
-current_time = "день"
-current_weather = "ясно"
+from skills import manage_skills
+from quests import manage_quests
+from achievements import manage_achievements
+from events import manage_events
+from dialogues import manage_dialogues
+from save_load import save_game, load_game
 
 class GameApp(ctk.CTk):
     def __init__(self):
@@ -164,15 +91,15 @@ class GameApp(ctk.CTk):
     def handle_park_decision(self, choice):
         if choice == 0:
             self.display_text("Вы обменялись контактами с Алексом и договорились встретиться снова.")
-            skills["коммуникабельность"] += 1
-            update_relationship("Алекс", 2)
-            update_location_reputation("парк", 1)
-            quests.append("Встретиться с Алексом в парке")
+            manage_skills.upgrade_skill("коммуникабельность")
+            manage_dialogues.update_relationship("Алекс", 2)
+            manage_dialogues.update_location_reputation("парк", 1)
+            manage_quests.append("Встретиться с Алексом в парке")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш человек.")
-            update_relationship("Алекс", -1)
-            update_location_reputation("парк", -1)
+            manage_dialogues.update_relationship("Алекс", -1)
+            manage_dialogues.update_location_reputation("парк", -1)
             self.chapter_1()
 
     def cafe(self):
@@ -199,15 +126,15 @@ class GameApp(ctk.CTk):
     def handle_cafe_final_decision(self, choice):
         if choice == 0:
             self.display_text(f"Вы обменялись контактами с Лизой и договорились встретиться снова.")
-            skills["коммуникабельность"] += 1
-            update_relationship("Лиза", 2)
-            update_location_reputation("кафе", 1)
-            quests.append("Встретиться с Лизой в кафе")
+            manage_skills.upgrade_skill("коммуникабельность")
+            manage_dialogues.update_relationship("Лиза", 2)
+            manage_dialogues.update_location_reputation("кафе", 1)
+            manage_quests.append("Встретиться с Лизой в кафе")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это было не ваше место.")
-            update_relationship("Лиза", -1)
-            update_location_reputation("кафе", -1)
+            manage_dialogues.update_relationship("Лиза", -1)
+            manage_dialogues.update_location_reputation("кафе", -1)
             self.chapter_1()
 
     def library(self):
@@ -234,15 +161,15 @@ class GameApp(ctk.CTk):
     def handle_library_final_decision(self, choice):
         if choice == 0:
             self.display_text(f"Вы обменялись контактами с Максом и договорились встретиться снова.")
-            skills["интеллект"] += 1
-            update_relationship("Макс", 2)
-            update_location_reputation("библиотека", 1)
-            quests.append("Встретиться с Максом в библиотеке")
+            manage_skills.upgrade_skill("интеллект")
+            manage_dialogues.update_relationship("Макс", 2)
+            manage_dialogues.update_location_reputation("библиотека", 1)
+            manage_quests.append("Встретиться с Максом в библиотеке")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш день.")
-            update_relationship("Макс", -1)
-            update_location_reputation("библиотека", -1)
+            manage_dialogues.update_relationship("Макс", -1)
+            manage_dialogues.update_location_reputation("библиотека", -1)
             self.chapter_1()
 
     def gym(self):
@@ -269,22 +196,22 @@ class GameApp(ctk.CTk):
     def handle_gym_final_decision(self, choice):
         if choice == 0:
             self.display_text(f"Вы обменялись контактами с Ником и договорились встретиться снова.")
-            skills["физическая сила"] += 1
-            update_relationship("Ник", 2)
-            update_location_reputation("спортивный зал", 1)
-            quests.append("Встретиться с Ником в спортивном зале")
+            manage_skills.upgrade_skill("физическая сила")
+            manage_dialogues.update_relationship("Ник", 2)
+            manage_dialogues.update_location_reputation("спортивный зал", 1)
+            manage_quests.append("Встретиться с Ником в спортивном зале")
             self.check_skills_for_chapter_2()
         else:
             self.display_text("Вы вежливо отказались и ушли. Возможно, это был не ваш день.")
-            update_relationship("Ник", -1)
-            update_location_reputation("спортивный зал", -1)
+            manage_dialogues.update_relationship("Ник", -1)
+            manage_dialogues.update_location_reputation("спортивный зал", -1)
             self.chapter_1()
 
     def check_skills_for_chapter_2(self):
-        if sum(skills.values()) >= required_skills_for_chapter_2:
+        if sum(manage_skills.skill_tree.values()) >= manage_skills.required_skills_for_chapter_2:
             self.chapter_2()
         else:
-            self.display_text(f"Вам нужно набрать еще {required_skills_for_chapter_2 - sum(skills.values())} навыков, чтобы перейти к следующей главе.")
+            self.display_text(f"Вам нужно набрать еще {manage_skills.required_skills_for_chapter_2 - sum(manage_skills.skill_tree.values())} навыков, чтобы перейти к следующей главе.")
             self.chapter_1()
 
     def chapter_2(self):
@@ -298,10 +225,8 @@ class GameApp(ctk.CTk):
     def handle_chapter_2_choice(self, choice):
         if choice == 0:
             self.display_text("Вы соглашаетесь и проводите выходные вместе. Вы узнаете друг друга лучше и чувствуете, что между вами возникает что-то особенное.")
-            skills["коммуникабельность"] += 1
-            global reputation
-            reputation += 1
-            unlock_achievement("Любовь с первого взгляда")
+            manage_skills.upgrade_skill("коммуникабельность")
+            manage_achievements.unlock_achievement("Любовь с первого взгляда")
             self.romantic_date()
         else:
             self.display_text("Вы вежливо отказываетесь, но ваш новый знакомый не сдается и предлагает встретиться позже.")
@@ -336,7 +261,7 @@ class GameApp(ctk.CTk):
             self.display_text("Вы поблагодарили официанта и насладились десертом.")
         elif choice == 1:
             self.display_text("Вы предложили разделить десерт со своим спутником. Это был романтический жест, который укрепил ваши отношения.")
-            update_relationship("Алекс", 2)
+            manage_dialogues.update_relationship("Алекс", 2)
         elif choice == 2:
             self.display_text("Вы попросили упаковать десерт с собой.")
 
@@ -347,16 +272,14 @@ class GameApp(ctk.CTk):
     def handle_restaurant_date_final_choice(self, choice):
         if choice == 0:
             self.display_text("Вы: Я тоже. Давай продолжим наше свидание.")
-            skills["коммуникабельность"] += 1
-            global reputation
-            reputation += 1
+            manage_skills.upgrade_skill("коммуникабельность")
             self.chapter_3()
         else:
             self.display_text("Вы: Спасибо за вечер. Но, возможно, это был не самый удачный момент.")
             self.chapter_2()
 
     def park_date(self):
-        self.display_text("\nВы гуляете по парку, наслаждаясь природой и компанией друг друга.")
+        self.display_text("\nВы гуляете по парку, наслаждаясь природой и обществом друг друга.")
         self.display_text("Вы чувствуете, что между вами возникает романтическое напряжение.")
         self.display_text("Ваш спутник: Спасибо за этот вечер.")
         self.set_button_texts(["Да", "Нет"])
@@ -365,9 +288,7 @@ class GameApp(ctk.CTk):
     def handle_park_date_choice(self, choice):
         if choice == 0:
             self.display_text("Вы: Я тоже. Давай продолжим наше свидание.")
-            skills["коммуникабельность"] += 1
-            global reputation
-            reputation += 1
+            manage_skills.upgrade_skill("коммуникабельность")
             self.chapter_3()
         else:
             self.display_text("Вы: Спасибо за вечер. Но, возможно, это был не самый удачный момент.")
@@ -384,9 +305,7 @@ class GameApp(ctk.CTk):
     def handle_movie_date_choice(self, choice):
         if choice == 0:
             self.display_text("Вы: Я тоже. Давай продолжим наше свидание.")
-            skills["коммуникабельность"] += 1
-            global reputation
-            reputation += 1
+            manage_skills.upgrade_skill("коммуникабельность")
             self.chapter_3()
         else:
             self.display_text("Вы: Спасибо за вечер. Но, возможно, это был не самый удачный момент.")
@@ -403,9 +322,7 @@ class GameApp(ctk.CTk):
     def handle_concert_date_choice(self, choice):
         if choice == 0:
             self.display_text("Вы: Я тоже. Давай продолжим наше свидание.")
-            skills["коммуникабельность"] += 1
-            global reputation
-            reputation += 1
+            manage_skills.upgrade_skill("коммуникабельность")
             self.chapter_3()
         else:
             self.display_text("Вы: Спасибо за вечер. Но, возможно, это был не самый удачный момент.")
@@ -439,45 +356,3 @@ class GameApp(ctk.CTk):
     def button_click(self, index):
         if hasattr(self, 'current_function'):
             self.current_function(index)
-
-def update_relationship(name, points):
-    if name in relationships:
-        relationships[name] += points
-        print(f"Ваши отношения с {name} изменились. Текущий уровень: {relationships[name]}")
-
-        if relationships[name] >= 10:
-            print(f"Вы достигли высокого уровня отношений с {name} и получили уникальный бонус!")
-            skills["харизма"] += 1
-
-def update_location_reputation(location, points):
-    if location in location_reputation:
-        location_reputation[location] += points
-        print(f"Ваша репутация в {location} изменилась. Текущий уровень: {location_reputation[location]}")
-
-def unlock_achievement(name):
-    for achievement in achievements_list:
-        if achievement["name"] == name:
-            if not achievement["unlocked"]:
-                achievement["unlocked"] = True
-                print(f"\nДостижение разблокировано: {achievement['name']} - {achievement['description']}")
-                apply_reward(achievement["reward"])
-            break
-
-def apply_reward(reward):
-    if reward == "Бонус к коммуникабельности":
-        skills["коммуникабельность"] += 1
-    elif reward == "Бонус к харизме":
-        skills["харизма"] += 1
-    elif reward == "Бонус к интеллекту":
-        skills["интеллект"] += 1
-    elif reward == "Бонус к физической силе":
-        skills["физическая сила"] += 1
-    elif reward == "Бонус к удаче":
-        skills["удача"] += 1
-    elif reward == "Бонус к репутации":
-        global reputation
-        reputation += 1
-
-if __name__ == "__main__":
-    app = GameApp()
-    app.mainloop()
