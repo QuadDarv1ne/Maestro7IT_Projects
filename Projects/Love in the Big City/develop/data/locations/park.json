@@ -1,0 +1,9 @@
+{
+    "name": "парк",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["прогулка", "пикник", "знакомства"],
+    "popular_characters": ["Александр", "Надежда", "Любовь"]
+  }
+  

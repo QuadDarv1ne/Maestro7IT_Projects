@@ -1,0 +1,9 @@
+{
+    "name": "кафе",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["кофе", "общение", "работа"],
+    "popular_characters": ["Лиза", "Вера", "Любовь"]
+  }
+  

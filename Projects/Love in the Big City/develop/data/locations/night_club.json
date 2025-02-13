@@ -1,0 +1,9 @@
+{
+    "name": "ночной клуб",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["танцы", "музыка", "вечеринки"],
+    "popular_characters": ["Вика", "Иван"]
+  }
+  

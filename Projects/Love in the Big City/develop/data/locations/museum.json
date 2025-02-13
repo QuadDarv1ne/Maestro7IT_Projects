@@ -1,0 +1,9 @@
+{
+    "name": "музей",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["экскурсии", "искусство", "история"],
+    "popular_characters": ["Анна", "Вероника"]
+  }
+  

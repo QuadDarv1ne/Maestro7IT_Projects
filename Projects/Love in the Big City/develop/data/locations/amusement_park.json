@@ -1,0 +1,9 @@
+{
+    "name": "парк аттракционов",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["аттракционы", "развлечения", "фото"],
+    "popular_characters": ["Настя", "Дмитрий"]
+  }
+  

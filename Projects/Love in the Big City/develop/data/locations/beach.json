@@ -1,0 +1,9 @@
+{
+    "name": "пляж",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["отдых", "плавание", "волейбол"],
+    "popular_characters": ["Катя"]
+  }
+  

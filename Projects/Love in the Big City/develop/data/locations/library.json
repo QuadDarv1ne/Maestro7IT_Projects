@@ -1,0 +1,9 @@
+{
+    "name": "библиотека",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["чтение", "учеба", "исследования"],
+    "popular_characters": ["Максим", "Надежда", "Мария", "Сергей"]
+  }
+  

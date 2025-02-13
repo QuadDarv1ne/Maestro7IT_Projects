@@ -1,52 +1,68 @@
 {
-    "locations": [
-      {
-        "name": "парк",
-        "description": "Уютный зеленый парк с озером и скамейками.",
-        "base_reputation": 0,
-        "related_characters": ["Александр", "Надежда"]
-      },
-      {
-        "name": "кафе",
-        "description": "Тихое кафе с ароматным кофе и десертами.",
-        "base_reputation": 0,
-        "related_characters": ["Лиза", "Любовь"]
-      },
-      {
-        "name": "библиотека",
-        "description": "Тихая библиотека с огромным выбором книг.",
-        "base_reputation": 0,
-        "related_characters": ["Максим", "Мария"]
-      },
-      {
-        "name": "спортивный зал",
-        "description": "Современный зал с тренажерами и бассейном.",
-        "base_reputation": 0,
-        "related_characters": ["Николай", "Вера"]
-      },
-      {
-        "name": "музей",
-        "description": "Исторический музей с древними артефактами.",
-        "base_reputation": 0,
-        "related_characters": ["Анна", "Вероника"]
-      },
-      {
-        "name": "пляж",
-        "description": "Песчаный пляж с волейбольной площадкой.",
-        "base_reputation": 0,
-        "related_characters": ["Катя"]
-      },
-      {
-        "name": "ночной клуб",
-        "description": "Шумный клуб с танцполом и баром.",
-        "base_reputation": 0,
-        "related_characters": ["Вика"]
-      },
-      {
-        "name": "парк аттракционов",
-        "description": "Яркий парк с колесом обозрения и каруселями.",
-        "base_reputation": 0,
-        "related_characters": ["Настя"]
-      }
-    ]
-  }
+  "locations": [
+    {
+      "name": "парк",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["прогулка", "пикник", "знакомства"],
+      "popular_characters": ["Александр", "Надежда", "Любовь"]
+    },
+    {
+      "name": "кафе",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["кофе", "общение", "работа"],
+      "popular_characters": ["Лиза", "Вера", "Любовь"]
+    },
+    {
+      "name": "библиотека",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["чтение", "учеба", "исследования"],
+      "popular_characters": ["Максим", "Надежда", "Мария", "Сергей"]
+    },
+    {
+      "name": "спортивный зал",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["тренировки", "общение", "соревнования"],
+      "popular_characters": ["Николай", "Вера"]
+    },
+    {
+      "name": "музей",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["экскурсии", "искусство", "история"],
+      "popular_characters": ["Анна", "Вероника"]
+    },
+    {
+      "name": "пляж",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["отдых", "плавание", "волейбол"],
+      "popular_characters": ["Катя"]
+    },
+    {
+      "name": "ночной клуб",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["танцы", "музыка", "вечеринки"],
+      "popular_characters": ["Вика", "Иван"]
+    },
+    {
+      "name": "парк аттракционов",
+      "type": "public",
+      "initial_reputation": 0,
+      "max_reputation": 100,
+      "activities": ["аттракционы", "развлечения", "фото"],
+      "popular_characters": ["Настя", "Дмитрий"]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+    "name": "спортивный зал",
+    "type": "public",
+    "initial_reputation": 0,
+    "max_reputation": 100,
+    "activities": ["тренировки", "общение", "соревнования"],
+    "popular_characters": ["Николай", "Вера"]
+  }
+  
