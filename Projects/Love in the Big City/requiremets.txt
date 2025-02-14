@@ -1,0 +1,6 @@
+sqlite3
+flask
+fastapi
+django
+matplotlib
+numpy
